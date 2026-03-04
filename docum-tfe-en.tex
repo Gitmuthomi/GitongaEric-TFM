@@ -1,0 +1,2635 @@
+\documentclass[english]{tfgitic}[2024/07/01]
+% per a fórmules químiques
+\usepackage[version=4]{mhchem}
+% Per dibuixar gràfics: base general i gràfics senzills
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+% Per dibuixar gràfics: circuits electrònics
+\usepackage[europeanresistors,americaninductors]{circuitikz}
+% Per dibuixar gràfics: diagrames diversos
+\usepackage{pgfplots}
+% Per escriure algoritmes
+\usepackage[plain,figure]{algorithm2e}
+% Per a usar taules elàstiques
+\usepackage{tabularx}
+
+
+
+
+
+% Indica quines bd bibliografiques usarem
+\addbibresource{docum-tfe.bib}
+
+% Marges en els algoritmes
+\setlength{\algomargin}{4em}
+
+% Versió de pgfplots a usar
+\pgfplotsset{compat=newest}
+
+\definecolor{tufte1}{rgb}{0.7,0.7,0.55}
+\definecolor{yellowmarker}{HTML}{DEF440}
+
+\pgfplotsset{
+  tufte bar/.style={
+    ybar,
+    axis line style={draw opacity=0},
+    xtick=\empty,
+    ymin=0,
+    bar width=3mm,
+    x=2*\pgfkeysvalueof{/pgf/bar width},
+    ymajorgrids,
+    grid style=white,
+    axis on top,
+    major tick length=0pt,
+    cycle list={
+      fill=tufte1, draw=none\\
+    },
+    enlarge x limits={
+      abs=0.5*\pgfkeysvalueof{/pgf/bar width}
+    },
+    axis x line*=bottom,
+    x axis line style={
+      draw opacity=1,
+      tufte1,
+      thick
+    },
+    yticklabel=\pgfmathprintnumber{\tick}\,\%
+  }
+}
+
+
+\title{
+  How to Write a TFE Manuscript
+}
+
+\subtitle{
+  A Manual of Composition, Orthotypography, and Typography\\
+  Version~\classversion{}
+}
+
+\author{Berenguer de Cruïlles}
+
+\advisor{Sebastià Vila-Marta}
+
+
+
+\topics{
+  \acro{tfe} manuscrypt;
+  UPC Manresa
+  }
+
+
+\dedication{
+  To those led astray\\
+  by the evil toward \acro{wysiwyg} editors.\\
+  May the odds be ever in their favor.
+}
+
+\begin{acknowledgments}
+  My heartfelt thanks to everyone who encouraged me to learn \TeX{}
+  back when even printing the output was a challenge. They introduced
+  me to the world of typography, and I have passionately enjoyed it
+  ever since.
+
+  I am also grateful to the students who served as early adopters and
+  reviewers of this class by using it in their own projects. Many of
+  them provided valuable suggestions and critiques that helped improve
+  this style. I have made an effort to ensure their names appear in
+  the changelog for this class (appendix~\ref{cap:historia}).
+
+  Montse Méndez carefully reviewed version~{6.4} of this documentation
+  and contributed significantly to its improvement. I extend my
+  deepest thanks.
+\end{acknowledgments}
+
+
+
+\begin{resum}
+  Aquest document és una guia completa per als estudiants que preparen
+  el seu treball final d'estudis (\acro{tfe}) utilitzant la classe
+  \fitx{tfgitic} de \LaTeX{}. S’hi expliquen detalladament les
+  instruccions per estructurar el document en seccions lògiques com
+  ara capítols, annexos, figures, taules i referències
+  bibliogràfiques, d’acord amb els estàndards acadèmics d'UPC
+  Manresa. Es posa èmfasi en les bones pràctiques tipogràfiques, l’ús
+  coherent de les citacions mitjançant \fitx{BiBLaTeX}, i la
+  importància de la claredat del contingut per damunt de les
+  ornamentacions visuals. També es descriuen bones pràctiques per
+  referenciar figures, redactar algoritmes i gestionar bibliografies
+  amb \fitx{BibLaTeX}, desaconsellant les modificacions manuals que
+  contradiguin el format establert per la classe.
+
+  A més, la guia introdueix eines de suport com \fitx{latexmk} per a
+  una compilació més eficient, i l’editor \fitx{emacs} amb les
+  extensions \fitx{AUCTeX} i \fitx{RefTeX} per facilitar l’edició i la
+  gestió de citacions. L’objectiu és fomentar un enfocament
+  disciplinat i centrat en el contingut a l’hora de redactar treballs
+  acadèmics, assegurant que els estudiants prioritzin la qualitat i la
+  integritat del seu treball. Seguint els principis i el flux de
+  treball que es proposen en aquest manual, es poden generar documents
+  ben estructurats i amb un format professional que compleixin les
+  expectatives institucionals amb el mínim esforç.
+\end{resum}
+
+
+\begin{abstract}
+  This document serves as a comprehensive guide for students preparing
+  their Capstone Project or Master Thesis manuscript (\acro{tfe})
+  using the \texttt{tfgitic} \LaTeX{} class. It provides detailed
+  explanations on how to structure the document into logical sections,
+  including chapters, appendices, figures, tables, and bibliographic
+  references, in accordance with UPC Manresa academic
+  standards. Emphasis is placed on proper typographic practices,
+  consistent citation methods using biblatex, and the importance of
+  content clarity over visual embellishment. The document also
+  outlines best practices for referencing figures, writing algorithms,
+  and managing bibliographies with \fitx{BibLaTeX}, while discouraging
+  manual formatting alterations that contradict class defaults.
+
+  Additionally, the guide introduces supporting tools such as
+  \fitx{latexmk} for streamlined compilation and \fitx{emacs} with
+  \fitx{AUCTeX} and \fitx{RefTeX} for efficient editing and citation
+  management. It aims to foster a disciplined and content-oriented
+  approach to academic writing, ensuring that students prioritize the
+  quality and integrity of their work. By adhering to the principles
+  and workflow proposed in this manual, students can produce
+  well-structured, professionally formatted documents that meet
+  institutional expectations with minimal friction.
+\end{abstract}
+
+
+
+
+\begin{document}
+
+\part{Thesis Manuscript Typesetting}
+
+\chapter{Introduction}
+\label{cap:intro}
+
+This style has been specifically designed to facilitate the
+typesetting of Capstone Project or Master Thesis manuscript. In this
+document the acronym \acro{tfe}---which derives from the Catalan
+form---will be used to refer to either of the two works
+interchangeably. Originally developed for the ICT Systems Engineering
+degree at UPC Manresa, the style has, especially since version~{7.0},
+expanded to be used across any undergraduate or master’s program at
+UPC Manresa. It fully adheres to the current regulatory requirements
+\cite{manresa23:_normat_trebal_fi_estud_epsem}.
+
+As this is a \LaTeX{} style, it assumes the user has some knowledge of
+the tool. If you’ve never used \LaTeX{} before, don’t be
+discouraged---we encourage you to try it! It is a powerful and
+rewarding tool that can serve you well for many years. The style also
+assumes that the working environment is Linux. If you are unfamiliar
+with \LaTeX{}, we recommend checking Appendix~\ref{ape:intro-latex}
+for a brief introduction.
+
+The style has been designed according to the following principles:
+
+\begin{itemize}
+
+\item \emph{High legibility}. The font and layout have been chosen to
+  maximize readability, including high-quality mathematical
+  typography.
+
+\item \emph{High information density}. Without compromising
+  legibility, the style promotes a dense layout. This is essential for
+  improved environmental sustainability and for producing a printed
+  document that is easier to manage.
+
+\item \emph{Support for Catalan and English}. The style allows the
+  document to be written in either Catalan or English. In each case,
+  orthotypographic conventions appropriate to the chosen language are
+  applied.
+
+\end{itemize}
+
+\section{Installing the Class}
+
+The latest version of this style can always be downloaded from the
+following \acro{url}:
+\url{https://ocwitic.epsem.upc.edu/assignatures/tfg/format-de-la-memoria}.
+There, you will find a tarfile containing:
+\begin{itemize}
+\item The style documentation.
+\item The style file itself.
+\item A template for the \acro{tfe} manuscript.
+\end{itemize}
+
+We recommend that you always download the most recent version from
+this \acro{url}, as the style is actively maintained and updated
+regularly.
+
+The style (called a «class» in \LaTeX{} jargon) is implemented in a
+single file named \fitx{tfgitic.cls}. Simply placing this file in the
+same directory as your manuscript source is enough to use it. The
+other files included in the \est{tarfile} are templates and
+documentation, which are not required to compile the \acro{tfe}, but
+we recommend keeping them on hand during the writing process.
+
+In addition to standard packages, the class relies on additional
+packages from the \texttt{texlive} distribution, such as \fitx{tikz},
+\fitx{hyperref}, \fitx{texlive-science}, \fitx{booktabs}, and some
+specific fonts used for the \acro{upc} logo, which must be installed
+beforehand. To install the required packages on a Debian-based Linux
+system, run the following commands:
+\begin{verbatim}
+$ apt-get install texlive-latex-base texlive-latex-recommended
+$ apt-get install texlive-fonts-recommended texlive-pictures
+$ apt-get install texlive-science texlive-latex-extra
+$ apt-get install biber texlive-bibtex-extra
+\end{verbatim}
+
+The basic steps to start typesetting the manuscript are:
+\begin{enumerate}
+\item Install the required packages as explained above.
+\item Download the latest version of the class as a \est{tarfile}
+  named \fitx{tgfitic.tar.gz}.
+\item Extract the contents of the \est{tarfile}.
+\item Copy the class file \fitx{tfgitic.cls} to the directory where you
+  will develop the manuscript. We strongly recommend using a version
+  control system to manage the source code of your report.
+\item Also copy the template files: \fitx{tfe.tex} and \fitx{tfe.bib}.
+\item Start writing your report using the templates!
+\item Don't forget to fully read carefully this documentation before
+  starting to write.
+\end{enumerate}
+
+
+
+\section{Class Manual}
+\label{sec:documentacio}
+
+The manual for this class is the very document you are reading, which
+serves both as an example and as the official documentation. The
+source files for this document are \fitx{document-tfe-en.tex},
+\fitx{document-tfe.bib}, \fitx{taula-exemple-1.png},
+\fitx{taula-exemple-2.png}, \fitx{taula-exemple-3.png},
+\fitx{taula-exemple-3.png}, and \fitx{halebopp3.jpg}. When compiled,
+they produce the \texttt{pdf} file you are currently viewing.
+
+This documentation does not focus on topics considered standard, such
+as basic knowledge of \LaTeX{}, \texttt{emacs}, or
+\texttt{biblatex}. Only brief references are made to these, as
+extensive high-quality resources are available elsewhere for those who
+need them.
+
+Regarding the formal aspects of the \acro{tfe} manuscript, this
+document avoids elaborating on many elements that, although regulated,
+are automatically handled by the \texttt{tfgitic} class. These
+include, among others: the font and font sizes used in different
+contexts, page dimensions, page numbering format, line and paragraph
+spacing, cover design, index formatting, and many other layout
+details.
+
+For the various modules---i.e., classes and packages---mentioned in
+this document, you can always refer to their respective user manuals
+using the \fitx{texdoc} command. For example, to learn more about the
+\fitx{siunitx} package, run the following command in the terminal:
+\begin{verbatim}
+$ texdoc siunitx
+\end{verbatim}
+
+This way, you can explore the details of each package and make the
+most of their features.
+
+
+\section{Class Options}
+
+In the \texttt{tfgitic} class, the following options can be applied:
+
+\begin{description}
+
+\item{\texttt{creativecommons} | \texttt{nocreativecommons}} This
+  option controls whether a Creative Commons license appears on the
+  back cover. By default, the license is included, and the chosen
+  variant is \acro{by-nc-sa}.
+
+  The license of the report defines the legal rights granted to
+  readers: whether they can reproduce the work, use it as a basis for
+  derivative work, and so on. For more information, consult the
+  \acro{faq} on the Creative Commons website
+  \cite{cc22:_creat_comm_web}.
+
+\item{\texttt{catalan} | \texttt{english}} This option sets the main
+  language of the document. By default, the language is Catalan. The
+  next chapter provides more detail on language selection.
+
+\item{\texttt{bachelor} | \texttt{master}} This option specifies
+  whether the document is a bachelor’s thesis or a master's degree
+  report. By default, it is treated as a capstone project.
+
+\end{description}
+
+
+
+
+\chapter{The Language of the Manuscript}
+
+Every thesis manuscript is written in a main language. This style
+supports Catalan or English as the primary language. The appropriate
+option must be specified in the \texttt{tfgitic} class to indicate the
+main language of the document.
+
+The main language determines several automatic elements, such as the
+formatting of dates. It also affects the orthotypographic conventions
+applied throughout the document, which differ between Catalan and
+English. For instance, list formatting and punctuation conventions may
+vary depending on the language selected.
+
+Having English as the main language of the document does not prevent
+you from including sections in Catalan, or vice versa. For example,
+you might need to quote a passage originally written in Catalan. In
+such cases, it is recommended to explicitly mark the language of the
+excerpt. This ensures that the correct typographic conventions are
+applied. You can do this using a construction like the following:
+
+\begin{verbatim}
+\begin{otherlanguage}{catalan}
+Quan escrivim en Català, si escrivim \verb!«aquest exemple»!,
+obtenim «aquest exemple». En el cas que hi hagi cometes dins de
+cometes, escrivim \verb!«Dèlia digué, «Això no funcinarà mai.»»! i
+obtenim «Dèlia digué, «Això no funcinarà mai.»» tal i com demana la
+tradició ortotipogràfica.
+\end{otherlanguage}
+\end{verbatim}
+
+An example of this mechanism applied to an English paragraph can be
+found in item~\ref{pun:cometes} of Chapter~\ref{cap:ortotipografia}.
+
+
+
+
+\chapter{Writing Conventions and Style Guidelines}
+
+When writing the manuscript for the \acro{tfe}, some general
+principles should be kept in mind. Perhaps the most important is the
+linguistic register, which must correspond to that of a scientific and
+technical document.
+
+Some fundamental points to respect are:
+\begin{enumerate}
+
+\item Use either the first-person plural or an impersonal style
+  consistently throughout the document. The verb tense should be
+  uniform. Avoid writing sentences like:
+  \begin{displayquote}
+    «I have found that the resulting voltage was within the margins.»
+  \end{displayquote}
+  \begin{displayquote}
+    «That's why I decided to use the most recent version.»
+  \end{displayquote}
+  Instead, it is preferable to write:
+  \begin{displayquote}
+    «We have found that the resulting voltage was within the margins.»
+  \end{displayquote}
+  \begin{displayquote}
+    «That's why we decided to use the most recent version.»
+  \end{displayquote}
+
+\item Aim for a concise and precise writing style. Consider the
+  following paragraph, extracted verbatim from a capstone manuscript:
+  \begin{displayquote}
+    In 2014, from ipython is born the Jupyter project, for which
+    Jupyter Notebook is created. This is a software that, among many
+    other things, turns ipython into a web application. Jupyter
+    Notebook allows editing and sharing documents (notebooks) online
+    with the main characteristic that in them one can insert live
+    code, Tex typographies, images, equations, etc.
+  \end{displayquote}
+  Here is a possible improved version:
+  \begin{displayquote}
+    In 2014, the Jupyter project was launched as an evolution of
+    IPython, leading to the creation of Jupyter Notebook. This
+    software transforms IPython into a web-based application, allowing
+    users to edit and share notebooks online. These notebooks support
+    live code, \LaTeX{} formatting, images, equations, and more.
+  \end{displayquote}
+
+\item Ensure correct spelling throughout the document.
+
+\end{enumerate}
+
+Many books can help you improve your writing. A particularly
+recommended one is Daniel Cassany’s
+\cite{cassany95:_la_cuina}. Another useful reference is the book by
+Rowena Murray and Sarah Moore \cite{murray06:_handb_academ_writin}.
+
+
+\chapter{Fundamental Orthotypographic Criteria}
+\label{cap:ortotipografia}
+
+\dictum[Wikipedia]{\textbf{Orthotypography} f. Set of conventions that
+  in each language defines the meaning and rightful usage of
+  typographic signs, notably punctuation marks, and elements of layout
+  such as flush margins and indentation.}
+
+
+\medskip\noindent
+Many of the orthotypographic rules required in the \acro{tfe} memory
+are applied automatically by the \LaTeX{} class \texttt{tfgitic}. For
+example, page layout, page numbering, and the formatting of lists are
+handled by the class without any manual intervention.
+
+However, some aspects depend on the author’s input because they cannot
+be automated. Below is a list of essential criteria that must be
+applied manually.
+
+\begin{enumerate}
+\item \emph{Quotation marks}. \label{pun:cometes} Quotation marks are
+  used to highlight citations, terms, or expressions within the
+  text. Handling quotation marks correctly is delicate because:
+  \begin{itemize}
+  \item They vary depending on the language of the document.
+  \item They need to address complex situations, such as nested
+    quotations.
+  \end{itemize}
+
+  The class \texttt{tfgitic} automatically manages these
+  complexities. Therefore, in the source, quotations should always be
+  written using the Latin low quotation marks \verb!«! and
+  \verb!»!. When there are nested quotes, these should also use low
+  quotes. The class will automatically convert them according to the
+  orthotypographic rules.
+
+  For English, if you write \verb|«as in this text»|, the output will
+  be «as in this text» with the proper English-style upper quotes. In
+  nested quotes, the automatic system converts the marks correctly as
+  well. For example, the source
+  \verb!«she smoked a «joint» while she looked with sliced eyes»!
+  produces «she smoked a «joint» while she looked with sliced eyes.»
+  Notice how the outer quotation marks are double, and the inner ones
+  are single, as per English typographic tradition.
+
+  \begin{otherlanguage}{catalan}
+    Quan escrivim en Català, si escrivim \verb!«aquest exemple»!,
+    obtenim «aquest exemple». En el cas que hi hagi cometes dins de
+    cometes, escrivim \verb!«Dèlia digué, «Això no funcionarà mai.»»! i
+    obtenim «Dèlia digué, «Això no funcionarà mai.»» tal i com demana
+    la tradició ortotipogràfica del Català.
+  \end{otherlanguage}
+
+\item \emph{Dashes}. Different dashes have distinct uses:
+  \begin{itemize}
+  \item The short dash (hyphen) is used in compound words, e.g.,
+    «sought-after».
+  \item The medium dash (en-dash), written as \verb!--! is used in
+    date or number ranges, e.g. «2017--2025», typeset as
+    \verb!«2017--2025»!
+  \item The minus sign indicates subtraction or change of
+    sign. \LaTeX{} handles this automatically when in math mode. For
+    instance, \verb!$-3$! renders as $-3$, which is a correct minus
+    sign, and \verb!$4-2$! renders as $4-2$. Note that \verb!«-3»!
+    produces a hyphen dash «-3», which is incorrect. This is a reason
+    why numbers are always enclosed in dollar signs when typesetting
+    \LaTeX{}.
+
+    It is interesting to remark that the minus sign is not the
+    en-dash. Consider the result of typessetting
+    \verb!$4-2$ and «4--2»!, that produces $4-2$ and «4--2». The first
+    is a substraction while the second a range.
+  \item The long dash (em-dash), written as three dashes \verb!---!,
+    marks interruptions or breaks in text---often used in scientific
+    writing for parenthetical remarks.
+\end{itemize}
+
+\item \emph{Geminated el}. The catalan «geminated el» (\l.l) has a
+  unique typographic form designed to maintain word flow without
+  appearing as two separate letters divided by a middle dot\footnote{
+    Gemination is a phonetic phenomena consisting on the articulation
+    of a consonant for a longer period of time than that of a
+    singleton consonant. Many languages write two times the same
+    consonant to denote it is geminated. However, in Catalan «ll»
+    refers to pallatal el. Therefore, «\l.l» is used to denote
+    geminated el.}. According to Fabra \cite{fabra84:_conver}, the
+  spacing between the two els should resemble that of two normal
+  letters without any middle dot.
+
+  In \LaTeX{}, the geminated el is obtained using the macro
+  \verb!\l.l!. For example: \verb!Inte\l.ligent! produces
+  Inte\l.ligent, and \verb!Ape\l.les! produces Ape\l.les
+
+  Using this macro also ensures correct line breaks when a word
+  containing a geminated el splits at the end of a line: the middle
+  dot disappears and is replaced by a hyphen. See, for example, this
+  excerpt written in Catalan:
+
+  \begin{center}
+    \begin{minipage}{0.5\linewidth}
+      Tal com ens havia dit en a\l.lusió a l'acuare\l.la que hi havia
+      al co\l.legi, mostrava un idi\l.li fa\l.laç.
+    \end{minipage}
+  \end{center}
+  typeset as:
+\begin{verbatim}
+\begin{minipage}{0.5\linewidth}
+Tal com ens havia dit en a\l.lusió a l'acuare\l.la que hi havia
+al co\l.legi, mostrava un idi\l.li fa\l.laç.
+\end{minipage}
+\end{verbatim}
+
+\item \emph{Ellipsis}. Typographically, ellipsis are not just three
+  ordinary dots in a row. Writing three dots consecutively breaks the
+  typographical rhythm of the prose, as seen here...
+
+  \LaTeX{} provides the macro \verb!\dots! to produce proper ellipsis,
+  like this sentence\dots
+
+\item \emph{Acronyms}. Scientific texts often use acronyms to
+  represent recurring terms. Writing acronyms in full uppercase
+  letters visually disrupts the text flow and line rhythm. The
+  recommended style is to use small caps, which are capital letters
+  sized similarly to lowercase letters, preserving a balanced
+  appearance. For example: \textsc{This is text written with small
+    caps}.
+
+  The class \texttt{tfgitic} provides the macro \verb!\acro!, which
+  formats acronyms correctly. For example, \verb!\acro{rfid}! outputs
+  \acro{rfid}---lowercase letters styled as capitals. When an acronym
+  starts a sentence, capitalize the first letter, as in:
+  \begin{quote}
+    \acro{Nasa} is the \acro{usa} spatial agency.
+  \end{quote}
+
+\item \emph{Emphasized text}. Always mark emphasized text using the
+  \LaTeX{} macro \verb!\emph!. Avoid using boldface except for section
+  titles, where it is applied automatically.
+
+\item \emph{Foreign words}. Foreign words not adapted to the
+  document’s language are usually italicized. The class provides the
+  macro \verb!\est{}! for this purpose; for example, \verb!\est{chic}!
+  produces \est{chic}. Other examples include: \est{joie de vivre},
+  \est{blitzkrieg} or \est{ad infinitum}.
+
+  It is generally preferable to avoid foreignisms.
+
+
+\item \emph{Numerical values}. Numerical values are written using a
+  comma as the decimal separator. To facilitate consistent formatting
+  throughout the document, the package \texttt{sunitx}---already
+  loaded by default---should be used.
+
+  Examples:
+  \begin{itemize}
+  \item \verb|\num{23.036}| yields \num{23,036};
+  \item \verb|\ang{23}| yields \ang{23};
+  \item \verb|\ang{23;10;12}| yields \ang{23;10;12};
+  \item \verb|\num{30.45d-4}| yields \num{30.45d-4};
+  \item \verb|\num{3.45d-4}| yields \num{3.45D-4};
+  \item \verb|\complexnum{2+4i}| yields \complexnum{2+4i}.
+  \item \verb|\numlist{12.; 10.091; 11.54}| yields \numlist{12.; 10.091; 11.54}.
+  \item \verb|\numproduct{5 x 100 x 2}| yields \numproduct{5 x 100 x 2}.
+  \item \verb|\numrange{5}{100}| yields \numrange{5}{100}.
+  \end{itemize}
+
+  Note that the system automatically rounds values---in this case, to
+  two decimal places. It is advisable to include all known decimals in
+  the source code and allow the system to handle rounding for
+  consistency throughout the document.
+
+  The rounding behavior and the number of decimals can be
+  configured. By default, the style rounds to two decimal places, as
+  required in \acro{tfe} reports.
+
+  Also note how \texttt{sunitx} respects the original number of
+  decimal digits unless more than two are used, in which case rounding
+  applies. Compare:
+  \begin{itemize}
+  \item \verb|\num{69}| yields \num{69}
+  \item \verb|\num{69.2}| yields \num{69.2}
+  \item \verb|\num{69.26}| yields \num{69.26}
+  \item \verb|\num{69.266}| yields \num{69,266}
+  \end{itemize}
+
+\item \emph{Units}. Units, always expressed using the International
+  System, are also formatted via the \texttt{sunitx} package. This
+  ensures correct spacing, line breaking, and unit notation.
+
+  Examples:
+  \begin{itemize}
+  \item \verb|\qty{10.23}{\kilo\ohm}| yields \qty{10.23}{\kilo\ohm};
+  \item \verb|\qty{10.239}{\micro\farad}| yields
+    \qty{10.239}{\micro\farad};
+  \item \verb|\qty{0.23d-3}{\metre\per\second}| yields
+    \qty{0.23d-3}{\metre\per\second};
+  \item \verb|\qty{100}{\degreeCelsius}| yields
+    \qty{100}{\degreeCelsius};
+  \item \verb|\qty{12.012}{\mega\bit\per\second}| yields
+    \qty{12.012}{\mega\bit\per\second}.
+  \item \verb|\qtylist{12.; 10.091; 11.54}{\ohm}| yields \qtylist{12.;
+      10.091; 11.54}{\ohm}.
+  \item \verb|\qtyproduct{5 x 100 x 2}{\kilo\meter}| yields
+    \qtyproduct{5 x 100 x 2}{\kilo\meter}.
+  \item \verb|\qtyrange{5}{100}{\degreeCelsius}| yields
+    \qtyrange{5}{100}{\degreeCelsius}.
+  \end{itemize}
+
+  Shorthand notations are available for common units, for instance:
+  \begin{itemize}
+  \item \verb|\qty{3.}{\us}| yields \qty{3.}{\us};
+  \item \verb|\qty{2.059}{\kg}| yields \qty{2.059}{\kg};
+  \item \verb|\qty{2.3}{\kHz}| yields \qty{2.3}{\kHz}.
+  \end{itemize}
+
+  The numeric values that precede the units follow the same rules as
+  described in the previous section. For example:
+  \begin{quote}
+    «We will use a \qty{47}{\kilo\ohm} resistor in the circuit.» \\
+    «The primary coil resistance was measured at \qty{34.123}{\ohm}.»
+  \end{quote}
+
+\item \emph{Formulas and chemical elements}. Chemical formulas can be
+  typeset using the \texttt{mhchem} package, which simplifies chemical
+  notation.
+
+  Examples:
+  \begin{itemize}
+  \item \verb|\ce{H2O}| yields \ce{H2O};
+  \item \verb|\ce{(NH4)2S}| yields \ce{(NH4)2S};
+  \item \verb|\ce{[AgCl2]-}| yields \ce{[AgCl2]-};
+  \item \verb|\ce{1/2H2O}| yields \ce{1/2H2O}.
+  \end{itemize}
+
+  It also supports chemical reactions:
+  \begin{itemize}
+  \item \verb|\ce{CO2 + C -> 2CO}| yields \ce{CO2 + C -> 2CO};
+  \item \verb|\ce{SO4^2- + Ba^2+ -> BaSO4 v}| yields \ce{SO4^2- +
+      Ba^2+ -> BaSO4 v}.
+  \item \verb|$\ce{x Na(NH4)HPO4 ->[\Delta] (NaPO3)_x + x NH3 ^ + x H2O}$| yields $\ce{x Na(NH4)HPO4 ->[\Delta] (NaPO3)_x + x NH3 ^ + x H2O}$.
+  \end{itemize}
+
+\item \emph{\acro{URL}s}. \acro{Url}s should be written using the
+  \verb|\url| macro. This macro formats them with a monospaced font,
+  allows line breaks at appropriate places, and makes them clickable.
+
+  Example:
+  \begin{itemize}
+  \item \verb|\url{http://w3c.org}| yields \url{http://w3c.org}.
+  \end{itemize}
+\end{enumerate}
+
+
+\chapter{Tables and Figures}
+
+Tables and figures are considered floating elements. This means they
+do not appear at a fixed location within the text, but are instead
+positioned by the typesetting system where it deems most
+appropriate. To refer to them from the main text, a system of labels
+and cross-references is used. This allows you to cite a figure or
+table reliably, without needing to worry about its exact placement or
+numbering.
+
+At first, working with floating elements may seem unpredictable or
+even confusing, particularly if you're unfamiliar with how \LaTeX{}
+handles them. Tables and figures might not appear exactly where they
+are placed in the source code, but rather where the system finds the
+most suitable location based on layout constraints.
+
+The general recommendation is to rely on \LaTeX{}’s automatic placement
+system during the drafting phase. Only once the content is finalized
+should you consider manually adjusting the position of figures or
+tables that appear in awkward or unsuitable locations.
+
+The \texttt{tfgitic} class prioritizes placing figures at the top of
+the page, and if not possible, at the bottom. It avoids placing
+floating elements in ways that would disrupt the flow or readability
+of the text.
+
+
+
+\section{Tags and References}
+\label{apa:etiquetes}
+
+The tagging and referencing system in \LaTeX{} is general-purpose and
+applies to all parts of the document---not just to figures and
+tables. It is also very simple to use. The system is based on the
+macro \verb!\label!, which defines a tag at a given point in the text,
+and the macro \verb!\ref!, which references that tag elsewhere in the
+document.
+
+For example, the previous chapter begins with the following code:
+\begin{verbatim}
+\chapter{Introducció}
+\label{chap:intro}
+\end{verbatim}
+Here, the tag \verb!chap:intro! is defined. This tag name can be chosen
+freely, though it is good practice to use meaningful and structured
+names (e.g., prefixing with \verb!chap:! for chapters).
+
+If we later refer to this tag using \verb!\ref{chap:intro}!, the macro
+will be replaced by the appropriate chapter number:
+Chapter~\ref{cap:intro}.
+
+This system allows you to freely add, remove, or rearrange parts of
+the document without having to manually update reference
+numbers---\LaTeX{} handles that automatically, ensuring consistency
+throughout the text.
+
+
+
+\section{Tables}
+
+Floating tables are defined using the \verb!\table! environment.
+Typically, a table includes a caption and a label to allow
+referencing. Below is a basic example:
+
+\begin{verbatim}
+\begin{table}
+  \centering
+  \begin{tabular}{lS[table-format=7.0]S}
+    \toprule
+    Region & {Population} & {Literacy Rate (\%)} \\
+    \midrule
+    Northland     & 1200000 & 97.5 \\
+    Eastvale      &  850000 & 89.3 \\
+    Southpoint    &  460000 & 93.8 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Population and literacy rate in three administrative regions.}
+  \label{tab:regions}
+\end{table}
+\end{verbatim}
+
+\begin{table}
+  \centering
+  \begin{tabular}{lS[table-format=7.0]S}
+    \toprule
+    Region & {Population} & {Literacy Rate (\%)} \\
+    \midrule
+    Northland     & 1200000 & 97.5 \\
+    Eastvale      &  850000 & 89.3 \\
+    Southpoint    &  460000 & 93.8 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Population and literacy rate in three administrative regions.}
+  \label{tab:regions}
+\end{table}
+
+The result is shown in Table~\ref{tab:regions}. Note how the numerical
+values are properly aligned and formatted thanks to the conventions
+applied by the \texttt{sunitx} package: automatic rounding,
+replacement of the decimal point with a comma, handling of scientific
+notation, and so on.
+
+Some tables may require more complex structures. Consider, for
+instance, Table~\ref{tab:pio2}, which was extracted from a real
+project report. You can inspect the source code of this document to
+see how it was created.
+
+\begin{table}
+  \centering
+  \begin{tabular}{lSSS}
+    \toprule
+    & \multicolumn{3}{c}{\emph{Speedup}} \\
+    \cmidrule(r){2-4}
+    {k} & {n = \num{1d6}} & {n = \num{1d7}} & {n = \num{2d7}} \\
+    \midrule
+    1 & 1.000 & 1.000 & 1.000 \\
+    2 & 1.011 & 1.177 & 1.401 \\
+    3 & 1.061 & 1.514 & 1.710 \\
+    4 & 0.948 & 1.673 & 1.941 \\
+    5 & 0.942 & 1.768 & 2.117 \\
+    6 & 0.525 & 1.518 & 2.412 \\
+    7 & 0.546 & 1.189 & 1.607 \\
+    8 & 0.374 & 0.909 & 1.364 \\
+    \bottomrule
+  \end{tabular}
+  \caption{\emph{Speedup} in the computation of \(\pi\) using \texttt{octave}.}
+  \label{tab:pio2}
+\end{table}
+
+Designing effective tables is a more technical task than it might
+first appear. Bringhurst, in
+\cite[70]{bringhurst04:_elemen_typog_style}, outlines several
+important principles to consider when typesetting
+tables. Appendix~\ref{ape:disseny-taules} briefly explains how to
+design good tables.
+
+
+\section{Figures}
+
+Figures---whether graphics or photographs---are managed using a
+floating environment similar to that of tables. When using photographs
+or external images, they must be stored in separate files and inserted
+into the document using the \verb!\includegraphics! macro. This macro
+allows:
+
+\begin{itemize}
+\item Including external images. When compiling with
+  \texttt{pdflatex}, the supported formats are \texttt{jpeg},
+  \texttt{png}, and \texttt{pdf}.
+\item Scaling, cropping, and rotating images to adapt them to the
+  layout of the document.
+\end{itemize}
+
+The following code, for example, includes a photo scaled to 80\% of
+the page width. The result is shown in Figure~\ref{fig:hale-bopp}.
+
+\begin{verbatim}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{halebopp3}
+  \caption{Comet Hale-Bopp photographed in 1997 from
+    Joshua Tree National Park, USA. \copyright{} NASA.}
+  \label{fig:hale-bopp}
+\end{figure}
+\end{verbatim}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{halebopp3.jpg}
+  \caption{Comet Hale-Bopp photographed in 1997 from Joshua Tree National Park, USA. \copyright{}
+  NASA.}
+  \label{fig:hale-bopp}
+\end{figure}
+
+Figures can also represent diagrams or plots. In such cases, using
+vector formats is strongly recommended over raster images. Vector
+graphics result in smaller file sizes, faster printing, and better
+scalability. Many applications for creating diagrams and plots can
+export to vector formats, such as \texttt{pdf}. For instance, tools
+like \texttt{gnuplot} or \texttt{inkscape} support this.
+
+The method of including these vector graphics is the same as for
+photographs. The preferred format is typically \texttt{pdf}.
+
+An excellent alternative for creating high-quality diagrams is the
+\texttt{pgf/tikz} package, along with its various extensions. This
+powerful tool allows you to define graphics directly within the \LaTeX{}
+source code, offering exceptional visual quality and full document
+integration. For many standard diagrams, this approach produces
+outstanding results.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[scale=0.75,->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+    thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
+    \node[main node] (1) {1};
+    \node[main node] (2) [below left of=1] {2};
+    \node[main node] (3) [below right of=2] {3};
+    \node[main node] (4) [below right of=1] {4};
+
+    \path[every node/.style={font=\sffamily\small}]
+    (1) edge node [left] {0.6} (4)
+        edge [bend right] node[left] {0.3} (2)
+        edge [loop above] node {0.1} (1)
+    (2) edge node [right] {0.4} (1)
+        edge node {0.3} (4)
+        edge [loop left] node {0.4} (2)
+        edge [bend right] node[left] {0.1} (3)
+    (3) edge node [right] {0.8} (2)
+        edge [bend right] node[right] {0.2} (4)
+    (4) edge node [left] {0.2} (3)
+        edge [loop right] node {0.6} (4)
+        edge [bend right] node[right] {0.2} (1);
+  \end{tikzpicture}
+  \qquad
+  \begin{circuitikz}[scale=0.75,american voltages]
+    \draw
+    % rotor circuit
+    (0,0) to [short, *-] (6,0)
+    to [V, l_=$\mathrm{j}{\omega}_m \underline{\psi}^s_R$] (6,2) % rotor emf
+    to [R, l_=$R_R$] (6,4) % rotor resistance
+    to [short, i_=$\underline{i}^s_R$] (5,4) % rotor current
+    % stator circuit
+    (0,0) to [open, v^>=$\underline{u}^s_s$] (0,4) % stator voltage
+    to [short, *- ,i=$\underline{i}^s_s$] (1,4) % stator current
+    to [R, l=$R_s$] (3,4) % stator resistance
+    to [L, l=$L_{\sigma}$] (5,4) % leakage inductance
+    to [short, i_=$\underline{i}^s_M$] (5,3) % magnetizing current
+    to [L, l_=$L_M$] (5,0); % magnetizing inductance
+  \end{circuitikz}
+  \caption{Two sample diagrams designed using TikZ.}
+  \label{fig:tikz-examples}
+\end{figure}
+
+There are many specialized packages built on top of \texttt{pgf/tikz}
+for specific types of graphics. A particularly useful one is
+\texttt{pgfplots}, which simplifies the creation of statistical plots
+and function graphs (e.g., histograms, box plots, scatter plots,
+etc.). Figure~\ref{fig:histo} shows a histogram generated using this
+package, styled according to the principles recommended by Tufte
+in~\cite{tufte01:_visual_displ_quant_infor}.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[font=\small]
+    \begin{axis}[tufte bar, xlabel={Category},
+      ylabel={Frequency},xtick={1,...,5},xticklabels={A,B,C,D,E}]
+      \addplot coordinates {
+        (1,30)
+        (2,34)
+        (3,50)
+        (4,26)
+        (5,19)
+      };
+    \end{axis}
+  \end{tikzpicture}
+  \caption{A histogram created with \texttt{pgfplots}.}
+  \label{fig:histo}
+\end{figure}
+
+
+
+\section{Table and Figure Captions}
+
+Both tables and figures must include a short descriptive caption, also
+known as a \emph{legend}. The function of the caption is similar to
+that of a headline: to briefly and precisely describe the table or
+figure. Captions should not be overly long---one or two sentences is
+usually sufficient. Any further explanation or commentary should
+appear in the main body of the text, not in the caption.
+
+In some cases, the caption can help clarify specific elements of a
+figure. For example, when a single figure contains multiple
+subfigures, the caption can indicate the purpose of each part.
+
+It is also common practice to cite the source of the figure or table
+in its caption. Some editorial styles recommend including explicit
+text such as «Source: \dots» or «Own source» to indicate the origin of
+the material. However, in the style used for the \acro{tfe}, such
+phrases are avoided, as they tend to be redundant and visually heavy.
+
+If you are the author of the figure or table, there is no need to
+state it explicitly---it is understood that all original material in
+the document is your own. On the other hand, if the material is
+borrowed from another source, the caption should include a natural
+reference using standard citation methods (see
+Section~\ref{cap:bibliografia}).
+
+Here are some examples of how to include such references in captions:
+\begin{itemize}
+  \item «Phase diagram adapted from [cite].»
+  \item «Income distribution table for central counties based on [cite].»
+  \item «Photograph by [cite] showing the Tordell fault.»
+\end{itemize}
+
+
+
+
+
+\chapter{Mathematical Notation}
+
+\LaTeX{} was originally created with a strong focus on writing
+mathematical content. It provides a rich set of tools for typesetting
+mathematics and is extensively documented online. This chapter offers
+a brief and simple introduction to these capabilities.
+
+The first thing to understand is that mathematical expressions must be
+written within special environments. These environments are marked
+clearly, and any content inside them is interpreted using mathematical
+typography rules.
+
+There are two main ways to typeset mathematical expressions:
+\begin{enumerate}
+\item \emph{Inline expressions}, written within the body of a
+  paragraph. These are delimited by dollar signs. For example, writing
+  \verb!$3\sin^2x$! produces $3\sin^2x$, and
+  \verb!$\int_0^5\frac{1+\tan x}{x} dx$! renders as
+  $\int_0^5\frac{1+\tan x}{x}dx$.
+
+\item \emph{Display expressions}, which are typeset in their own
+  line, centered on the page, but still part of the paragraph. The
+  simplest way to write them is using the \verb!\[ ... \]!
+  environment. For example:
+  \[
+    3\sin^2x
+  \]
+  \[
+    \int_0^5\frac{1+\tan x}{x}dx
+  \]
+
+  Note that although these formulas are visually separated, they do
+  not break the paragraph's structure.
+\end{enumerate}
+
+Observe how the presentation differs between inline and display
+math. Inline math is compressed vertically to match the line spacing
+of the surrounding text, whereas display math uses its full height,
+allowing for larger symbols.
+
+Regardless of the environment, mathematical expressions use the same
+syntax. Some key elements of this notation include:
+\begin{itemize}
+\item \emph{Braces \{\}} are used to group elements, just as in
+  programming languages. For example, \verb!$\sqrt{a}+3$! produces
+  $\sqrt{a}+3$, while \verb!$\sqrt{a+3}$! gives $\sqrt{a+3}$. To print
+  literal braces, you must escape them with a backslash: for instance,
+  \verb!$A = \{x \mid x \in \mathbb{R} \wedge x \geq 10\}$! results in
+  $A = \{x \mid x \in \mathbb{R} \wedge x \geq 10\}$.
+
+\item \emph{Standard functions} like logarithm, sine, etc., should
+  be written with a backslash to ensure correct spacing and font. For
+  example, \verb!$\log x$! renders as $\log x$ and \verb!$\sin x$! as
+  $\sin x$.
+
+\item \emph{Subscripts and superscripts} are written using \verb!_!
+  and \verb!^!, respectively. For example, \verb!$x^2$! gives $x^2$,
+  \verb!$x^{22}$! yields $x^{22}$, and \verb!$x^{\sin y}_{10}$!
+  produces $x^{\sin y}_{10}$.
+
+\item \emph{Large operators} such as sums and integrals can also
+  include subscripts and superscripts. For example,
+  \verb!$S = \sum_{i=0}^{n} i^2$! results in:
+  \[
+    S = \sum_{i=0}^{n} i^2
+  \]
+
+\item \emph{Greek letters and other symbols} can be inserted by
+  name. For example:
+  \begin{itemize}
+  \item \verb!$R_a = \pi r^2$! → $R_a = \pi r^2$
+  \item \verb!$\Lambda = \frac{\zeta \cdot \phi}{z^2 + 1}$! yields
+    $\Lambda = \frac{\zeta \cdot \phi}{z^2 + 1}$
+  \item \verb!$A = \overline{B \cup C}$! → $A = \overline{B \cup C}$
+  \end{itemize}
+  You can find full symbol reference guides easily on the web.
+\end{itemize}
+
+Sometimes it is useful to number display equations so that you can
+refer to them later. This is done using the \texttt{equation}
+environment:
+\begin{equation}
+  \label{eq:llei-pendol}
+  l\ddot{\theta} + g\sin\theta = 0
+\end{equation}
+
+This lets you refer to equation~\ref{eq:llei-pendol} from the text. It
+describes the motion of an ideal pendulum of length $l$.
+
+The code to produce this equation is as follows:
+\begin{verbatim}
+\begin{equation}
+  \label{eq:llei-pendol}
+  l\ddot{\theta} + g\sin\theta = 0
+\end{equation}
+\end{verbatim}
+
+The referencing mechanism uses the same system of labels and
+references explained earlier in section~\ref{apa:etiquetes}.
+
+
+
+
+\chapter{Algorithms and Programs}
+
+The field of systems engineering naturally involves frequent
+interaction with topics related to algorithms, programming languages,
+and command-line tools. This often presents challenges in maintaining
+orthotypographic consistency throughout the document. This chapter
+highlights some fundamental guidelines to help address these issues.
+
+
+\section{Referencing Files, Commands, and Shell Interactions}
+
+In many theses, it is common to refer to specific files within the
+main text. File names---whether regular files, directories, or
+complete paths---should be typeset using a typewriter font. For
+this purpose, the macro \verb!\fitx! is provided. It allows you to
+write entries such as \fitx{modul.c},
+\fitx{/etc/cron.daily/logrotate},
+\fitx{~/.config/back%/_window.txt}, or \fitx{~/.bashrc}. Note that
+  this macro correctly handles special characters and breaks
+  lines appropriately when necessary.
+
+  Sometimes it is also useful to reference commands issued in the
+  shell. For this, we use the macro \verb|\ord|. For example, we write
+  \verb!\ord|pdflatex tfe.tex|! to indicate that this document can be
+  compiled using the command \ord|pdflatex tfe.tex|. Note that instead
+  of curly braces, you may enclose the argument using any
+  delimiter---such as the vertical bar in this example.
+
+\section{Algorithms}
+
+Including long program listings or extensive data tables is generally
+discouraged within the main body of a thesis. Such material is better
+suited for an appendix or external digital support accessible
+online. However, it is often necessary to describe algorithms that
+play a key role in the work, either to illustrate a concept or to
+provide commentary.
+
+For writing algorithms, the \verb|algorithm2e| package proves
+especially useful. It is well-documented and allows you to typeset
+algorithms in familiar pseudo-code notation. For example, consider the
+following algorithm written using this syntax:
+
+\begin{verbatim}
+\begin{algorithm}
+  \KwIn{$n,m$ two natural numbers}
+  \KwOut{$r$ greatest common divisor of $n$ and $m$}
+  \BlankLine
+  \While{$n\neq m$}{
+    \eIf{$n>m$}{
+      $n := n - m$\;
+    }{
+      $m := m - n$\;
+    }
+  }
+  $r := m$\;
+  \caption{Euclid algorithm}
+  \label{alg:euclides}
+\end{algorithm}
+\end{verbatim}
+
+This produces an algorithm enclosed in a floating environment, much
+like a figure, as shown in Algorithm~\ref{alg:euclides}. To simplify
+document structure, algorithms are numbered in the same sequence as
+figures.
+
+\begin{algorithm}
+  \KwIn{$n,m$ two natural numbers}
+  \KwOut{$r$ greatest common divisor of $n$ and $m$}
+  \BlankLine
+  \While{$n\neq m$}{
+    \eIf{$n>m$}{
+      $n := n - m$\;
+    }{
+      $m := m - n$\;
+    }
+  }
+  $r := m$\;
+  \caption{Euclid algorithm}
+  \label{alg:euclides}
+\end{algorithm}
+
+
+
+
+
+\chapter{Bibliography}
+\label{cap:bibliografia}
+
+\section{Citations and Bibliography in the TFE}
+
+In a scientific document such as a \acro{tfe} thesis, the bibliography
+serves two distinct yet complementary purposes:
+
+\begin{enumerate}
+\item \emph{In-text citations:} Throughout the main body of the
+  document, references to external sources are made using
+  citations. These citations act as pointers to works included in the
+  bibliography and serve several essential functions:
+  \begin{itemize}
+  \item \emph{Attributing information to its original source:}
+    \begin{quote}
+      «According to Stevens,
+      \cite{thurston01:_histor_growt_steam_engin}, the steam engine
+      was invented by James Watt.»
+    \end{quote}
+
+  \item \emph{Building upon existing research:}
+    \begin{quote}
+      «To calculate the performance of a steam engine, we will apply
+      the formulas proposed by Thurston in
+      \cite{thurston01:_histor_growt_steam_engin}.»
+    \end{quote}
+
+  \item \emph{Directing the reader to further reading:}
+    \begin{quote}
+      «For more information on steam engines, see the book by
+      Thurston, \cite{thurston01:_histor_growt_steam_engin}.»
+    \end{quote}
+  \end{itemize}
+
+  Each citation refers to a corresponding entry in the bibliography
+  using a unique identifier, ensuring clarity and traceability for the
+  reader.
+
+\item \emph{Bibliography section:} At the end of the document---just
+  before the appendices---a dedicated unnumbered chapter titled
+  «Bibliography» lists all the sources cited throughout the text. Each
+  entry provides the full reference information (author, title,
+  publisher, year, etc.), formatted according to the type of
+  publication (book, article, website, etc.) and the selected
+  bibliographic style.
+
+  This reference list includes only works that have been cited in the
+  text; uncited sources should not appear in the bibliography. The use
+  of citation keys (such as
+  \verb|\cite{thurston01:_histor_growt_steam_engin}|) ensures a
+  consistent link between the in-text citation and the full
+  bibliographic record.
+\end{enumerate}
+
+Together, citations and the bibliography create a clear and reliable
+system for referencing sources. The citations provide context and
+attribution within the flow of the text, while the bibliography
+ensures that readers can retrieve complete details about the cited
+works.
+
+The method used to cite references, and the formatting of those
+references, varies according to the document type and follows strict
+and well-defined rules known as «bibliographic styles». Some commonly
+used styles include \acro{apa}
+\cite{association20:_public_americ_psych_assoc}, the {Chicago Manual
+  of Style \cite{chicago17:_chicag_manual_style}, the \acro{iso~690} standard
+  \cite{iso21:_iso_690}, and the \acro{ieee} style
+  \cite{periodicals18:_ieee_refer_guide}. In the formatting of
+  \acro{tfe} documents, we use the \texttt{BibTeX} standard, applying
+  the alphanumeric citation style \cite{lehman14:_biblat_packag}.
+
+
+
+
+
+\section{Managing the Bibliographic Database with \texttt{BibLaTeX}}
+
+Managing bibliographic references is not a trivial task. To assist
+with this, \LaTeX{} provides a powerful set of tools that greatly
+simplify the process. Although these tools offer extensive
+capabilities, this section provides only a brief introduction. For
+more detailed information, refer to~\cite{lehman14:_biblat_packag}.
+
+The general workflow is as follows: a separate file---typically named
+\fitx{tfe.bib} in our case---contains descriptions of the documents
+cited in the text. These descriptions include metadata such as author
+names, publication dates, titles, and more. Each document type (e.g.,
+book, article, manual) has a corresponding entry format with required
+and optional fields. The types of entries, along with the valid fields
+and formatting guidelines, are detailed
+in~\cite[][chap.~2]{lehman14:_biblat_packag}. This file constitutes
+the \emph{bibliographic database}.
+
+It’s worth noting that \texttt{emacs} offers a specific editing mode
+for working with \texttt{BibTeX} or \texttt{BibLaTeX} databases. A
+brief guide on using this mode is available in
+Appendix~\ref{ape:emacs}.
+
+In our example, the file \fitx{tfe.bib} includes the following entries
+(among others used throughout the document):
+
+\begin{verbatim}
+@Book{thurston01:_histor_growt_steam_engin,
+  author = {Robert Henry Thurston},
+  title = {A History of the Growth of the Steam-Engine},
+  publisher = {D. Appleton {and} company},
+  year = 1901,
+  address = {New York, USA},
+  edition = {4th revised},
+  langid = {english},
+}
+
+@Manual{lehman14:_biblat_packag,
+  title = {The Biblatex Package},
+  subtitle = {Programmable Bibliographies and Citations},
+  author = {Philipp Lehman and Philip Kime and Audrey Boruvka and Joseph Wright},
+  version = {2.9a},
+  month = 6,
+  year = 2014,
+  url = {http://mirrors.ctan.org/macros/latex/contrib/biblatex/doc/biblatex.pdf}
+}
+\end{verbatim}
+
+Note that each entry begins with a unique citation key---an arbitrary
+identifier used to reference the document in the text via commands
+like \verb|\cite{lehman14:_biblat_packag}|.
+
+In a \acro{tfe} document, you must specify which bibliographic
+database to use. This is done by placing the following macro near the
+beginning of your document:
+\begin{verbatim}
+\addbibresource{tfe.bib}
+\end{verbatim}
+
+Then, to insert the bibliography table where you want it to appear,
+include the command:
+\begin{verbatim}
+\printbibliography
+\end{verbatim}
+
+Typically, the bibliography is placed after the final chapter and
+before any appendices. It is not numbered, since---like the abstract
+or summaries---it is not considered part of the main body of the
+thesis. You can observe this structure by examining the source of the
+current example document.
+
+
+\section{Compiling a Document with Bibliographic References}
+
+When working with documents that include a bibliography, the
+compilation process involves additional steps compared to processing
+documents with only regular content. To compile this document, for
+example, the following sequence should be followed:
+
+\begin{enumerate}
+
+\item First, process the document using \ord|pdflatex tfe.tex|.
+
+\item Then, extract the bibliographic data required by the document
+  from the bibliography database using \ord|biber tfe|.
+
+\item Finally, process the document again with \ord|pdflatex tfe.tex|
+  to integrate the extracted bibliographic references.
+
+\end{enumerate}
+
+In general, you only need to repeat the second step (running
+\ord|biber|) when the bibliography database is modified---either
+because new entries have been added or existing entries have been
+updated.
+
+
+\section{Common Questions About Bibliographic Practices}
+
+This section addresses some frequently asked questions related to the
+bibliography of a \acro{tfe} document.
+
+\begin{enumerate}
+
+\item A common question is: How can a bibliographic reference be
+  included in the reference list if it is not explicitly cited in the
+  text? The short answer is---it should not be done. It is considered
+  poor practice to include references for documents that are not cited
+  within the body of the work. If a document is relevant to your
+  \acro{tfe}, it should certainly be cited at one or more appropriate
+  points in the main text.
+
+\item Not all documents are created equal in terms of scholarly
+  value. Different sources carry different levels of
+  \emph{rigor}\footnote{Here, rigor refers to the degree of
+    reliability or credibility attributed to the content of a
+    document.}. For instance, an article published in a peer-reviewed
+  scientific journal holds significantly more scholarly weight than a
+  blog post or a website of unknown authorship.
+
+  When selecting sources for your bibliography, always prioritize
+  those with the highest level of academic rigor available. This is
+  especially important in the context of a \acro{tfe}, where the
+  credibility of your references directly contributes to the overall
+  quality and trustworthiness of your work.
+\end{enumerate}
+
+
+\chapter{Organizing the Thesis Structure}
+
+By «organization of the thesis» we refer to how the document is
+structured into chapters, sections, appendices, and other formal
+components.
+
+The main objective of the document's structure is to communicate the
+work carried out as clearly and effectively as possible. Consequently,
+the organization may vary depending on the nature of the
+project. However, there are general guidelines that should always be
+followed. The \acro{tfe}
+regulations~\cite{manresa23:_normat_trebal_fi_estud_epsem} define a
+reference structure, which this style adheres to. The \texttt{tfgitic}
+class formats many of the mandatory structural elements automatically
+while allowing flexibility for content-dependent sections.
+
+As mentioned in Section~\ref{sec:documentacio}, the files
+\fitx{tfe.tex} and \fitx{tfe.bib} serve as templates for the
+\acro{tfe} thesis document and are pre-configured to follow the
+organization outlined in this chapter.
+
+\section{General Considerations}
+
+The organization of the thesis involves numerous considerations, many
+of which are handled automatically by the \texttt{tfgitic} class.
+
+The thesis is divided into two main parts: the \emph{preliminary block}
+and the \emph{central block}.
+
+\begin{enumerate}
+
+\item The preliminary block includes the cover, copyright,
+  dedication, acknowledgments, declaration of responsibility,
+  summaries, and the table of contents. These elements are formatted
+  and paginated automatically.
+
+\item The central block includes the main chapters, the bibliography,
+  and any appendices.  The structure of the central block depends on
+  the presence of appendices. If appendices are included, the central
+  block is split into two parts: the thesis body and the
+  appendices. If there are no appendices, this division is omitted.
+
+  Both the thesis and the appendices are divided into chapters,
+  sections, subsections, and---only if necessary---sub-subsections.
+\end{enumerate}
+
+\section{Main Divisions}
+
+This section lists, in order of appearance, the main components of the
+thesis document, indicating whether each is mandatory or optional and
+providing brief guidelines on their content and purpose.
+
+\subsection*{Preliminary Block}
+
+\begin{enumerate}
+
+\item \emph{Cover} [Mandatory]\par
+  The thesis must begin with a compliant cover page. All metadata for
+  the cover is defined before the \ord!\begin{document}! command using
+  macros provided by the style. Some macros accept an optional
+  parameter indicating gender and number:
+  \begin{description}
+  \item[m] Masculine singular
+  \item[M] Masculine plural
+  \item[f] Feminine singular
+  \item[F] Feminine plural
+  \end{description}
+
+  For example, if the thesis has a female tutor:
+\begin{verbatim}
+\counselor[f]{Adele Goldberg}
+\end{verbatim}
+
+  If the thesis is co-supervised by two women:
+\begin{verbatim}
+\advisor[F]{Margaret Hamilton and Mary Kenneth Keller}
+\end{verbatim}
+
+  The default value for omitted parameters is \texttt{m} (masculine
+  singular). Thus, these two are equivalent:
+\begin{verbatim}
+\author{Berenguer de Cruïlles}
+\author[m]{Berenguer de Cruïlles}
+\end{verbatim}
+
+  The list of macros that allow you to define metadata is as follows:
+  \begin{description}
+  \item[title] The title of the thesis. It must be the officially
+    registered title. This is mandatory. Line breaks can be added using
+    \verb!\\!.
+  \item[subtitle] The subtitle of the thesis. This is optional.
+  \item[author] The student who authored the work. Written as «first
+    name and surname» and not «surname, first name». This is
+    mandatory. Accepts an optional parameter with one of the following
+    values: \texttt{[m|f]}.
+  \item[advisor] The supervisor or supervisors of the work. Written as
+    «first name and surname» and not «surname, first name». This is
+    mandatory. Accepts an optional parameter with one of the following
+    values: \texttt{[m|M|f|F]}.
+  \item[company] The company or institution where the work is carried
+    out when officially done under an internship agreement (in «company»
+    mode). This is required if the thesis is done in «company» mode.
+  \item[counselor] The academic tutor of the work. When the work is
+    officially done under an internship agreement («company» mode), the
+    supervisor is a person from the company. In this case, a tutor is
+    required---typically a faculty member with a specific role defined
+    by the
+    regulations~\cite{manresa23:_normat_trebal_fi_estud_epsem}. Written
+    as «first name and surname» and not «surname, first name». This is
+    mandatory if the work is in “company” mode. Accepts an optional
+    parameter with one of the following values: \texttt{[m|f]}.
+  \item[location] The city where the \acro{tfe} is defended. The default
+    is Manresa.
+  \item[degree] The academic degree. By default, this is the Bachelor's
+    Degree in ICT Systems Engineering (or its official English name if
+    the thesis is written in English).
+  \item[ects] The workload in \acro{ECTS} credits. By default, it is 24,
+    which is the standard workload for the ICT Systems Engineering
+    degree.
+  \item[school] The school. By default, this is the Higher Polytechnic
+    School of Engineering of Manresa (or its official English name if
+    the thesis is written in English).
+  \item[topics] The two main thematic areas covered by the thesis, in
+    accordance with~\cite{manresa23:_normat_trebal_fi_estud_epsem}. The
+    areas are selected by the supervisor (or the tutor, if applicable)
+    from a predefined list established by the \acro{tfe} procedure.
+  \end{description}
+
+\item{}\emph{Dedication and Acknowledgments} [Optional]\par
+  A short dedication may be included using the macro
+  \verb|\dedication|. Acknowledgments should be more extended (e.g.,
+  1–3 paragraphs) and written in the \verb|acknowledgements|
+  environment. Both are automatically placed in the correct location.
+
+\item{}\emph{Summaries} [Mandatory]\par
+  Summaries allow the reader to quickly understand the purpose and
+  conclusions of the thesis. They should not exceed half a page.
+
+  It is mandatory to include: a summary in Catalan, using the
+  \verb|resum| environment; a summary in English, using the
+  \verb|abstract| environment.
+
+  These are placed before \verb|\begin{document}| and are
+  automatically formatted.
+
+\item{}\emph{Table of Contents} [Mandatory]\par
+  This is generated automatically.
+
+\end{enumerate}
+
+\subsection*{Central Block}
+
+\subsubsection*{Part I: Thesis Body}
+Remember that «Parts» are only used if the manuscript contains
+appendices. Otherwise, is better to avoid the «Part» subdivision.
+
+\begin{enumerate}
+\setcounter{enumi}{4}
+
+\item \emph{Introduction} [Mandatory]\par
+  This chapter introduces the thesis, including:
+  \begin{itemize}
+  \item The context, goals, and motivation of the project
+  \item Summary of results
+  \item Constraints (e.g., limited resources or budget)
+  \item Specific objectives
+  \item Outline of the document structure
+  \end{itemize}
+
+  It should also engage the reader’s interest and highlight the
+  relevance of the work.
+
+\item \emph{Background} [Mandatory]\par
+  This chapter presents essential background knowledge:
+  \begin{itemize}
+  \item Prior work in the same field, including a critical and
+    comparative review.
+  \item Theoretical concepts, tools, languages, and methods used in
+    the project.
+  \end{itemize}
+
+  This should be a concise overview, not a textbook. Relevant references
+  should be provided.
+
+\item \emph{Main Content} [Mandatory]\par
+  This section consists of the main chapters describing the
+  project. The structure depends on the specific nature of the work.
+
+\item \emph{Economic Study} [Optional]\par
+  If applicable, this chapter details economic considerations related
+  to the project.
+
+\item \emph{Environmental and Social Impact} [Optional]\par
+  If applicable, this chapter addresses environmental and social
+  aspects linked to the work.
+
+\item \emph{Conclusions} [Mandatory]\par
+  Summarizes the results, links them to the objectives, and discusses
+  unmet goals and potential reasons.
+
+\item \emph{Future Work} [Optional]\par
+  Optionally, you may describe 2–4 relevant follow-up lines of work,
+  briefly outlining how they could be approached.
+
+\item \emph{Bibliography} [Mandatory]\par
+  A non-numbered chapter listing all referenced works. It is
+  automatically generated using the bibliography manager. See
+  Chapter~\ref{cap:bibliografia} on page~\pageref{cap:bibliografia}.
+
+\end{enumerate}
+
+\subsubsection*{Part II: Appendices}
+
+\begin{enumerate}
+\setcounter{enumi}{12}
+
+\item \emph{Appendices} [Optional]\par
+  Appendices contain supporting material that is too detailed or
+  extensive for the main text. Examples include:
+  \begin{itemize}
+  \item Data tables
+  \item Maps or plans
+  \item Survey forms
+  \item Hard-to-access documents cited in the text
+  \item Transcripts of interviews
+  \item Source code
+  \end{itemize}
+
+  Whenever possible, cite such material rather than including it
+  directly. If appendices are used, the document must be split into
+  two parts: thesis body and appendices. If not, the \verb|\part{}|
+  macros should be omitted.
+\end{enumerate}
+
+
+
+
+
+\printbibliography
+
+
+\appendix
+
+\part{Appendices}
+
+\chapter{Best Practices for Writing a \acro{TFE} Manuscript}
+
+\colorbox{yellow}{
+  \begin{minipage}{1.0\linewidth}
+    \Large\sffamily
+    \begin{enumerate}
+
+    \item Never manually force page breaks, adjust spacing
+      arbitrarily, change fonts, or apply any other manual formatting
+      tweaks. Let \LaTeX{} handle the layout, and focus your effort on
+      the content.
+
+    \item The text and its explanatory power are the core of your
+      \acro{TFE} thesis. Your document is not a magazine, catalog, or
+      promotional brochure.
+
+    \item Figures should serve to clarify and support what is
+      explained in the text. Including figures simply to «fill space»,
+      to «make it look better», or because «there should be figures»
+      is not acceptable. Include only those figures that are truly
+      necessary, and design them with care. Ask yourself: if you
+      removed a figure, would the explanation suffer? If not, the
+      figure is probably unnecessary.
+
+    \item Use floating figures, and do not force their placement. If
+      the number of figures is appropriate, \LaTeX{}'s float mechanism
+      will place them in optimal positions.
+
+    \item Refer to all figures from the main text and explain them
+      clearly to reinforce your intended message.
+
+    \item Choose high-quality, academically sound bibliographic
+      references. Avoid citing web pages from unreliable sources,
+      commercial institutions, or general-interest content.
+
+    \item Provide complete bibliographic entries. Include all
+      available details about each source. Avoid submitting incomplete
+      or vague references.
+
+    \item In-text citations should support your argument, broaden the
+      context, and clarify the authorship of ideas that are not your
+      own.
+
+    \end{enumerate}
+    \smallskip
+  \end{minipage}
+}
+
+
+\chapter{Version History of the \texttt{tfgitic} Class and Documentation}
+\label{cap:historia}
+
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+  \toprule
+  \emph{Version} & \emph{Modifications} \\
+  \midrule
+  %current version
+  8.2 & Some typos.\\
+  8.1 & Add section numbers to pdf bookmarks.
+  Improve some details in the manual.
+  Solve typo contributed by Pau de las Heras.
+  Small improvements to release script.
+  More descriptive title for the manual.
+  New macro \verb/\classversion/.\\
+
+  8.0 & Class docum now in English, \fitx{docum-tfe-en}. New appendix
+  about table typessetting.
+  Upgrade and localise \texttt{siunitx} use.
+  Improve the manuscript abstract.\\
+
+  7.1 & Updated the minimum required versions for several packages.
+  Improved internationalization (I18N).
+  Added gender and number parameters to macros
+  for defining people. Enhanced word hyphenation rules for Catalan.
+  Introduced error messages for invalid metadata combinations.
+  Typographic information is now reflected on the inside cover.
+  Various corrections by Aleix Llusà. \\
+
+  7.0 & Bug fixes contributed by Eric Roy.
+  Updated to the latest version of the \texttt{sunitx} package.
+  Added a section on figure and table captions.
+  Introduced the «responsible statement» as required by anti-plagiarism
+  regulations. Differentiated the roles of tutor and supervisor.
+  Standardized project naming according to degree or master’s level.
+  Replaced the \acro{tfg} acronym with the more general \acro{tfe}.
+  Added option to indicate whether the \acro{tfe} is for a bachelor’s
+  or a master’s program.
+  Fixed an error in page numbering. \\
+
+  6.5 & Improvements to the bibliography relay system. \\
+
+  6.4 & Bug fixes. Updated the \acro{upc} logo in compliance with current regulations.
+  Added documentation for the \texttt{C-c C-a} command in \texttt{AUCTeX}. Updated the
+  \acro{cc} license to version 4.0. The \texttt{summary} and \texttt{abstract} environments
+  now apply the correct orthotypography for each language and respect paragraph structure.
+  Added a field for location (city) on the cover. Included additional comments on
+  bibliography formatting. Deprecated the \texttt{summary} environment in favor
+  of \texttt{abstract}. Updated bibliography. Generalized the class to support other
+  degrees and schools. \\
+
+  6.3 & Bug fixes. Major improvements to publishing tools. Modified and documented full
+  magnitude notation. Fixed an error in the implementation of the \texttt{abstract}
+  environment, which previously did not recognize paragraph breaks. \\
+
+  6.2 & Minor improvements to documentation. \\
+
+  6.1 & Removed minor warnings. Added version control to the \texttt{tfgitic} class. \\
+
+  6.0 & Documentation now includes appendices on \LaTeX{} and \texttt{Emacs}. Added a
+  chapter on writing mathematical expressions. Fixed the school name in the cover template. \\
+
+  5.0 & Added support for both English and Catalan. Improved cover formatting. Added
+  acknowledgments section. Expanded documentation. Introduced a new section on document
+  structure. \\
+
+  4.0 & Added automatic hyphenation and support for English quotation marks. \\
+
+  3.0 & Bibliography is now included in the table of contents. \\
+
+  2.0 & Added optional macro for defining subtitles. \\
+
+  1.0 & Introduced the class history. Added commentary on line breaks in ligatures
+  (such as the twin «l»). Added a new reference. Rewrote the section on appendices. \\
+
+  \bottomrule
+\end{tabularx}
+
+
+
+
+\chapter{Very Brief Introduction to \LaTeX}
+\label{ape:intro-latex}
+
+\LaTeX{}~\cite{lamport94:_latex_ed} is a high-quality typesetting
+system. It is not a \acro{wysiwyg} editor, but rather functions as a
+compiler: you write your document in a «source language» and, after
+compilation, obtain a file---typically in \texttt{pdf} format. \LaTeX{}
+itself is that source language. It is a type of markup language: you
+write the text and insert commands or «marks» that specify the
+structure---for example, titles, lists, formulas, and so on.
+
+The key benefit is this: when writing, you can focus entirely on
+content, while the compiler handles formatting automatically. The
+final layout depends on the document class being used. Changing the
+class or its parameters results in a different appearance. This very
+document, for example, uses a class that formats a thesis according to
+the conventions for \acro{tfe} submissions.
+
+A golden rule---the most important one---is: \emph{never override
+  the formatting defined by the document class}. The appearance is the
+exclusive responsibility of the class.
+
+The source code of a \LaTeX{} document is written in a plain text file
+using a text editor. For instance, in the file \fitx{document.tex},
+the contents might look like this:
+
+\begin{verbatim}
+\documentclass[a4paper,12pt]{article}
+\usepackage[catalan]{babel}
+
+\title{Un exemple}
+\author{Ramon Gener}
+
+\begin{document}
+\maketitle{}
+
+\section{Introducció}
+Això és un apartat d'exemple. I això que segueix una \emph{enumeració}:
+\begin{enumerate}
+\item Primer punt.
+\item Segon punt.
+\item Tercer punt.
+\end{enumerate}
+\end{document}
+\end{verbatim}
+
+To compile the document, run:
+\begin{verbatim}
+$ pdflatex document.tex
+\end{verbatim}
+
+After some messages appear in the terminal, the file
+\fitx{document.pdf} will be generated.
+
+Sometimes, a single compilation is not sufficient. To simplify the
+process, you can use the command \ord|latexmk|, which automatically
+runs the compiler as many times as needed. To install it:
+
+\begin{verbatim}
+$ sudo apt install latexmk
+\end{verbatim}
+
+This tool can also perform common tasks, such as generating a \acro{pdf} or
+cleaning up auxiliary files. Refer to the \texttt{man} page for
+details. To generate a \acro{pdf}:
+\begin{verbatim}
+$ latexmk -pdf document.tex
+\end{verbatim}
+
+If you're using the \texttt{emacs} editor---which we recommend---see
+Appendix~\ref{ape:emacs}.
+
+To learn the basics of \LaTeX{}, many resources are available. A
+helpful and concise introduction is found
+in~\cite{oetiker:_not_so_short_introd_latex}.
+
+
+
+\chapter{Emacs Support}
+\label{ape:emacs}
+
+\texttt{Emacs}~\cite{foundation19:_gnu_emacs,stallman81:_emacs_exten_custom_self_displ_editor}
+is the recommended text editor for working with \LaTeX{}. Support for
+\LaTeX{} in \texttt{Emacs} is primarily provided through the extension
+\texttt{AUCTeX}~\cite{thorup17:_auctex_sophis}, and secondarily via
+the \texttt{RefTeX} extension~\cite{dominik09:_reftex_user_manual},
+which works alongside AUCTeX to manage references and citations.
+
+These tools offer powerful features, including:
+\begin{itemize}
+  \item Insertion of macros and environments via key commands.
+  \item Automatic formatting of source code.
+  \item Syntax highlighting for improved readability.
+  \item Integration of the compile–preview workflow.
+  \item Auto-completion of citations and references.
+  \item Management of bibliography databases.
+\end{itemize}
+
+\section{Installation}
+
+If needed, install the required packages via:
+\begin{verbatim}
+$ sudo apt-get install emacs
+$ sudo apt-get install auctex
+\end{verbatim}
+
+Then, edit your \texttt{emacs} configuration file \fitx{~/.emacs},
+adding the following lines to activate \texttt{RefTeX} when
+\texttt{AUCTeX} is in use:
+\begin{verbatim}
+;; Enable RefTeX when AUCTeX is active
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+\end{verbatim}
+
+The next time you open \texttt{emacs}, the modes will be correctly
+configured.
+
+\section{Basic Usage}
+
+When you open a file with the \fitx{.tex} extension, \texttt{emacs}
+automatically enters «LaTeX mode». The menu bar will include:
+\begin{itemize}
+\item A «LaTeX» menu for inserting structures.
+\item A «Command» menu for compiling and viewing the document.
+\end{itemize}
+
+Most commands are also available via keyboard shortcuts, which are
+usually faster. Table~\ref{tab:ordres-emacs} lists some of the most
+frequently used key bindings. Especially important is the \texttt{C-c
+ C-c} command, which automatically determines and executes the next
+appropriate compilation step.
+
+\begin{table}
+  \centering
+  \begin{tabularx}{\linewidth}{@{}lX@{}}
+    \toprule
+    \emph{Shortcut} & \emph{Function} \\
+    \midrule
+    \texttt{C-c e} & Insert an environment; may prompt for parameters. \\
+    \texttt{C-c C-s} & Insert a section, subsection, or chapter. \\
+    \texttt{C-c RET} & Insert a macro, such as \texttt{author}. \\
+    \texttt{Tab} & Insert a new item in a list environment (\texttt{itemize}, \texttt{enumerate}, \texttt{description}). \\
+    \texttt{C-[} & Insert a citation, offering suggestions from the bibliography database. \\
+    \texttt{C-c )} & Same as above---alternative citation shortcut. \\
+    \texttt{C-c C-c} & Perform the next compilation step (e.g., compile or view, depending on context). \\
+    \texttt{C-c a} & Compile and view the document in one step. If necessary, runs \texttt{biber} or other tools. Most commonly used command. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Frequently used Emacs commands for working with \LaTeX{}. The prefix \texttt{C-} stands for the Control key.}
+  \label{tab:ordres-emacs}
+\end{table}
+
+If you're editing a bibliography file with the \fitx{.bib} extension,
+\texttt{Emacs} activates BibTeX/BibLaTeX mode, allowing for efficient
+database management. You can insert entry templates (e.g.,
+\texttt{@Book}), which include all fields---both mandatory and
+optional (prefixed with \texttt{opt}). After filling in a field, press
+\texttt{Tab} to jump to the next one. When done, the command
+\texttt{C-c C-c} removes unused fields, checks for syntax errors, and
+suggests a citation key. Just like that, your new reference is ready!
+
+
+
+\chapter{How to Typeset Tables}
+\label{ape:disseny-taules}
+
+Poorly designed tables are a common flaw in \acro{tfe}
+manuscripts. This appendix distills practical guidance from Bringhurst
+and Tufte on how to design effective tables and shows how to implement
+those ideas in \LaTeX{}.
+
+It also presents real examples taken from theses: each original table
+is analysed and then redesigned and typeset.
+
+\section{Best Practices for Table Design}
+\label{sec:good-pract-tables}
+
+Bringhurst \cite[70]{bringhurst04:_elemen_typog_style} devotes several
+pages to tabular typography. Püschel’s slides
+\cite{püschel10:_small_guide_makin_nice_tables} offer a concise
+\LaTeX{}-oriented summary. Designing tables is demanding; approach it
+deliberately. Keep the following principles in mind:
+
+\begin{enumerate}
+
+\item \emph{Purpose and necessity}\par
+  Use a table only when structure genuinely improves comprehension. If
+  the information reads just as well linearly, prefer prose or a list.
+
+  Every table must answer a clear question. Delete any column, row, or
+  figure that does not contribute to that answer.
+
+\item \emph{Economy and simplicity}\par
+  Show the data, not the furniture. Minimise rules (lines), boxes,
+  shading, and ornaments.
+
+  Prefer white space over ruling. Spacing between columns or column
+  groups normally replaces vertical rules entirely.
+
+  Avoid «chartjunk»: gradients, heavy fills, gratuitous bold, repeated
+  units in cells, and spurious decimals.
+
+\item \emph{Hierarchy and emphasis}\par
+  Build hierarchy with position, weight, and spacing---not
+  decoration. The eye should locate the header first, then the logical
+  groupings.
+
+  Column headings may use a slightly different style (small caps,
+  gentle letter-spacing, subtle weight change) but should not
+  overpower the body.
+
+  Totals or summary rows can be separated with a thin rule above,
+  extra white space, or a modest typographic shift---reserve shouting
+  (all caps, heavy bold) for real emergencies.
+
+\item \emph{Rules (lines)}\par
+  Use as few horizontal rules as possible: often just (a) a top rule,
+  (b) a header/body separator, (c) an optional subtotal or total rule,
+  and (d) a bottom rule.
+
+  Avoid vertical rules; alignment and spacing should do the work.
+
+  Keep strokes hairline to light. Thick rules dominate and break the
+  rhythm of the page.
+
+\item \emph{Alignment and numerals}\par
+  Align numbers by meaning:
+  \begin{itemize}
+  \item Integers flush right.
+  \item Decimals aligned on the separator (use the \texttt{S} column
+    from \fitx{siunitx} or \fitx{dcolumn}).
+  \item Put units in the header or a separate column---do not repeat a
+    constant unit in every cell.
+  \end{itemize}
+
+  %Use tabular (lining) figures for numeric columns; proportional
+  %figures are fine for prose.
+
+  Use a true minus sign for negatives; reserve en-dashes for
+  ranges. See point about dashes in Section~\ref{cap:ortotipografia}.
+
+\item \emph{Consistency and precision}\par
+  Round consistently. Do not imply precision the data do not have.
+
+  Order rows and columns logically (chronology, magnitude,
+  category). If the ordering principle is not obvious, state it.
+
+\item \emph{Spacing and proportion}\par
+  Row height: provide enough leading for legibility; avoid both
+  «airless» stacking and gaping voids.
+
+  Column separation: keep the smallest comfortable gap; a slightly
+  wider gap can signal a group boundary.
+
+  Keep tables within the main text measure unless a wider format is
+  essential; very wide tables impede reading.
+
+\item \emph{Typography inside cells}\par
+  If the table is dense, set type slightly smaller than the running
+  text (\qtyrange{0.5}{1}{pt}), but never so small that it strains the
+  eye.
+
+  Avoid competing emphases. Reserve bold or italics for one semantic
+  layer, not both simultaneously.
+
+  %Use small caps sparingly (e.g., for abbreviations in headers) to
+  %keep texture calm.
+
+\item \emph{Grouping and reading flow}\par
+  Group related rows with white space, not thick rules. A small extra
+  baseline skip (an «air line») is often enough.
+
+  Left-align text columns; centre only very short, homogeneous labels.
+
+  Avoid awkward wrapping of key identifiers. If a label is too long,
+  abbreviate it and explain in a note.
+
+\item \emph{Footnotes, sources, and notes}\par
+  Annotate sparingly. Use superscript markers or symbols and collect
+  explanations below the table in a smaller size.
+
+  Captions should be concise and specific.
+
+\item \emph{Accessibility and clarity}\par
+  Do not rely on colour alone; differentiation must survive grayscale
+  printing.
+
+  Explain non-obvious abbreviations in the heading or a note.
+
+  Ensure scanability: a reader should grasp what each column means and
+  where totals lie within \qtyrange{2}{3}{\second}.
+
+\item \emph{Avoid over-design}\par
+  Resist boxing every cell. Grids imprison data; open layouts support comparison.
+
+  Use shading only if hierarchy fails without it. If you must shade,
+  keep it very light and consistent.
+
+\end{enumerate}
+
+\begin{table}
+  \centering
+  \begin{tabularx}{0.7\linewidth}{@{}lX@{}}
+    \toprule
+    \emph{Aspect} & \emph{Question} \\
+    \midrule
+    Necessity & Does a table genuinely improve clarity over prose? \\
+    Hierarchy & Are headers / groups immediately identifiable? \\
+    Lines & Have I removed every non-essential rule? \\
+    Alignment & Are numerals and decimals properly aligned? \\
+    Units & Are units placed in headers (not repeated)? \\
+    Precision & Is decimal precision consistent and justified? \\
+    Space & Is grouping conveyed by white space, not clutter? \\
+    Caption & Is it concise, specific, and informative? \\
+    Notes & Are footnotes / sources clear yet unobtrusive? \\
+    Legibility & Is size/contrast acceptable in print? \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Good table checklist}
+  \label{tab:table-checklist}
+\end{table}
+
+Table~\ref{tab:table-checklist} offers a brief checklist inspired by
+the preceding principles. Use it to audit your tables.
+
+
+\section{\LaTeX{} Implementation Hints}
+
+\begin{itemize}
+\item Load \texttt{booktabs}: \verb|\toprule|, \verb|\midrule|,
+  \verb|\addlinespace|, \verb|\bottomrule|; avoid vertical rules.
+\item Use \texttt{siunitx} \verb|S| columns for numeric alignment,
+  rounding, and decimal alignment.
+\item Put units in the column heading,
+  e.g. \verb|\multicolumn{1}{c}{Voltage (\unit{\volt})}|.
+\item Separate logical row groups with \verb|\addlinespace| rather
+  than extra \verb|\midrule|s.
+\item Keep captions succinct, e.g.\par
+  \verb|\caption{Latency benchmarks for API endpoints ($n=500$).}|
+\item Always proof a printout; adjust spacing and rule weight after
+  seeing physical output.
+\end{itemize}
+
+
+
+\section{Table Examples}
+
+\subsection*{Example 1}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{taula-exemple-1.png}
+  \caption{Original table for example 1}
+  \label{fig:source-table-1}
+\end{figure}
+
+In this example we analyse the table in
+Figure~\ref{fig:source-table-1}, taken from a master’s thesis. Several
+issues contravene the best practices of
+Section~\ref{sec:good-pract-tables}.
+\begin{itemize}
+\item Decoration (colour bands, etc.) carries no information and
+  should be removed.
+\item Bold is used even though it should be reserved for sectioning.
+\item Centre alignment is poor for numeric columns.
+\item Headings are verbose.
+\item Columns could be hierarchised to aid reading.
+\end{itemize}
+
+\begin{table}
+  \centering
+  \sisetup{table-number-alignment = right}
+  \begin{tabular}{
+    l
+    S[table-format=3]        % Resmas
+    S[table-format=3]        % Peso total
+    S[table-format=2]        % CO2 emitido
+    S[table-format=3]        % Árboles (aprox, con ~)
+    S[table-format=1.2]      % Agua consumida
+    S[table-format=2]        % ClO2 (con decimal)
+    S[table-format=3]        % Energía kWh
+    }
+    \toprule
+    &
+    \multicolumn{2}{c}{\emph{Papel consumido}}&
+    \multicolumn{4}{c}{\emph{Consumo de recursos inducido}}&
+    \multicolumn{1}{c}{\emph{Huella}}
+    \\
+    \cmidrule(rl){2-3} \cmidrule(rl){4-7} \cmidrule(lr){8-8}
+    &
+    {Resmas} &
+    {Peso/\unit{\kilogram}} &
+    {Árboles} &
+    {Agua/\unit{\cubic\meter}} &
+    {\ce{ClO2}/\unit{\kilogram}} &
+    {Energía/\unit{\kWh}} &
+    {\ce{CO2}/\unit{\kilogram}} \\
+    \midrule
+    1 & 144 & 360 & 14 &  82 & 2.9 & 34 & 241 \\
+    2 & 156 & 390 & 15 &  88 & 3.1 & 36 & 261 \\
+    3 & 360 & 900 & 35 & 206 & 7.2 & 84 & 603 \\
+    \bottomrule
+  \end{tabular}
+    \caption{Redesign of table of Figure~\ref{fig:source-table-1}}
+  \label{tab:redesigned-table-1}
+\end{table}
+
+The redesign in Table~\ref{tab:redesigned-table-1} addresses these
+problems:
+\begin{itemize}
+\item All superfluous decoration is removed.
+\item Non-essential rules\footnote{In typography, «rules» are
+    horizontal or vertical lines.} are dropped: no vertical rules and
+  only the necessary horizontals. The structure becomes clear through
+  alignment and spacing.
+\item Columns are aligned according to standard practice.
+\item Columns are rearranged to allow meaningful grouping and a
+  hierarchical header.
+\item Repetitive temporal information («año») is moved to the caption.
+\item Bold is avoided. The structure alone clarifies headers; only the
+  top-level groups are emphasised to reveal hierarchy.
+\item Company names were anonymised in the original; «Consultora 1»
+  etc. adds width without meaning. Simple numbering suffices and
+  shortens the table.
+\end{itemize}
+Headers are upright; their role is evident thanks to the horizontal
+rules. Only the hierarchical layer is emphasised. In a simple,
+non-hierarchical table, no emphasis would be needed. The result is
+clearer and easier to read.
+
+A good caption would be «Tabla 2: Consumo anual de papel de tres
+consultoras, consumo inducido y impacto.»
+
+Source code for the redesigned table:
+\begin{verbatim}
+\begin{table}
+  \centering
+  \sisetup{table-number-alignment = right}
+  \begin{tabular}{
+    l
+    S[table-format=3]        % Resmas
+    S[table-format=3]        % Peso total
+    S[table-format=2]        % CO2 emitido
+    S[table-format=3]        % Árboles (aprox, con ~)
+    S[table-format=1.2]      % Agua consumida
+    S[table-format=2]        % ClO2 (con decimal)
+    S[table-format=3]        % Energía kWh
+    }
+    \toprule
+    &
+    \multicolumn{2}{c}{\emph{Papel consumido}}&
+    \multicolumn{4}{c}{\emph{Consumo de recursos inducido}}&
+    \multicolumn{1}{c}{\emph{Huella}}
+    \\
+    \cmidrule(rl){2-3} \cmidrule(rl){4-7} \cmidrule(lr){8-8}
+    &
+    {Resmas} &
+    {Peso/\unit{\kilogram}} &
+    {Árboles} &
+    {Agua/\unit{\cubic\meter}} &
+    {\ce{ClO2}/\unit{\kilogram}} &
+    {Energía/\unit{\kWh}} &
+    {\ce{CO2}/\unit{\kilogram}} \\
+    \midrule
+    1 & 144 & 360 & 14 &  82 & 2.9 & 34 & 241 \\
+    2 & 156 & 390 & 15 &  88 & 3.1 & 36 & 261 \\
+    3 & 360 & 900 & 35 & 206 & 7.2 & 84 & 603 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Consumo anual de papel de tres consultoras, consumo
+    inducido y impacto.}
+  \label{tab:redesigned-table-1}
+\end{table}
+\end{verbatim}
+
+
+
+\subsection*{Example 2}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{taula-exemple-2.png}
+  \caption{Original table for example 2}
+  \label{fig:source-table-2}
+\end{figure}
+
+Figure~\ref{fig:source-table-2} shows another problematic table. This
+one compares the cost of a couple of \acro{nb-iot} network connection
+offers from the same company. These are the most salient issues:
+\begin{itemize}
+\item Excessive rules create a cage.
+\item Columns are misaligned.
+\item Units are repeated in every cell.
+\item Bold headers look heavy.
+\item Headings are too long, inflating column widths.
+\item The table is forced inline instead of floating.
+\item The distinction between SIM/setup costs and variable costs is
+  unclear.
+\end{itemize}
+
+\begin{table}
+  \centering
+  % \sisetup{table-number-alignment = right}
+  \begin{tabular}{
+    S[table-format=1]        % MB
+    S[table-format=1.2]        % Cost mensual
+    S[table-format=2.2]        % Cost anual
+    S[table-format=2.2]        % Cost total
+    }
+    \toprule
+    &
+    \multicolumn{2}{c}{\emph{Cost variable}}&
+    \\
+    \cmidrule(rl){2-3}
+    {Velocitat} &
+    {Mensual}&
+    {Anual} &
+    {Cost fix}
+    \\
+    {(\unit{\mega\byte\per\second})} &
+    {(€)}&
+    {(€)} &
+    {(€)}
+    \\
+    \midrule
+    1 & 2.04 & 24.54 & 3.63 \\
+    5 & 2.41 & 28.9  & 3.63 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Redesign of table of Figure~\ref{fig:source-table-2}}
+  \label{tab:redesigned-table-2}
+\end{table}
+
+The redesign appears in Table~\ref{tab:redesigned-table-2}. In the
+redesign, the headings have been shortened and units are switen below
+to keep good column spacing. The hierarchical relation in the header
+is now explicit. A good caption would be «Taula 6.1: Preu del servei
+\acro{nb-iot} de Vodafone, [IoT20]. El cost fix inclou la \acro{sim} i
+la taxa de connexió.»
+
+Its source is:
+code is:
+\begin{verbatim}
+  \begin{tabular}{
+    S[table-format=1]        % MB
+    S[table-format=1.2]        % Cost mensual
+    S[table-format=2.2]        % Cost anual
+    S[table-format=2.2]        % Cost total
+    }
+    \toprule
+    &
+    \multicolumn{2}{c}{\emph{Cost variable}}&
+    \\
+    \cmidrule(rl){2-3}
+    {Velocitat} &
+    {Mensual}&
+    {Anual} &
+    {Cost fix}
+    \\
+    {(\unit{\mega\byte\per\second})} &
+    {(€)}&
+    {(€)} &
+    {(€)}
+    \\
+    \midrule
+    1 & 2.04 & 24.54 & 3.63 \\
+    5 & 2.41 & 28.9  & 3.63 \\
+    \bottomrule
+  \end{tabular}
+\end{verbatim}
+
+\subsection*{Example 3}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{taula-exemple-3.png}
+  \caption{Original table for example 3}
+  \label{fig:source-table-3}
+\end{figure}
+
+Figure~\ref{fig:source-table-3} compares several \acro{iot}
+communication modules. Some support both \acro{nb-iot} and
+\acro{lte-m}. Formal issues echo earlier examples:
+\begin{itemize}
+\item Too many rules.
+\item Overly bold headers.
+\item Units repeated in every entry.
+\item Citations in the first column are likely repeated in the text
+  and can be omitted.
+\end{itemize}
+Content-related problems are more serious:
+\begin{itemize}
+\item «dDRX» is opaque; some cells contain two values, themselves
+  doubled.
+\item «Average (max/min)» is ambiguous. Is it the average of
+  maxima/minima or the extrema of averages?
+\item The first row separates transmit and receive consumption; the
+  others do not. What do their values represent?
+\end{itemize}
+
+\begin{table}
+  \centering
+  \newcommand{\na}{\textemdash}
+  \begin{tabular}{
+    l
+    S[table-format=1.1]
+    S[table-format=1.1]
+    S[table-format=1.2]
+    S[table-format=3.2]
+    }
+    \toprule
+    & \multicolumn{2}{c}{\emph{Quiescent}}
+    & \multicolumn{2}{c}{\emph{eDRX}}
+    \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    {Mòdul}
+    & {Power off}
+    & {PSM}
+    & {Cycle}
+    & {I\textsubscript{avg}}
+    \\
+    & {(\unit{\micro\ampere})}
+    & {(\unit{\micro\ampere})}
+    & {(\unit{\second})}
+    & {(\unit{\milli\ampere})}
+    \\
+    \midrule
+    Quectel BC95-G &   & 3 & 2.6    & 0.5 \\
+    SARA-R410M     & 6 & 8 & 20.48  & 0.9 \\
+                   &   &   & 655.36 & 0.7 \\
+    SARA-R412M     & 6 & 8 & 20.48  & 0.9 \\
+                   &   &   & 655.36 & 0.7 \\
+    SARA-R42 series& 3 & 3 & 20.48  & 0.6 \\
+                   &   &   & 655.36 & 0.5 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Redesign of table in Figure~\ref{fig:source-table-3}. Low
+    power modes.}
+  \label{tab:low-power}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabular}{@{}
+    l
+    S[table-format=2.0]
+    S[table-format=3.0]
+    S[table-format=1.1]
+    S[table-format=3.0]
+    S[table-format=3.0]
+    S[table-format=1.1]
+    @{}}
+    \toprule
+    &
+    \multicolumn{3}{c}{\emph{NB-IoT}} &
+    \multicolumn{3}{c}{\emph{LTE-M}}
+    \\
+    \cmidrule(r){2-4} \cmidrule(l){5-7}
+    {Mòdul}
+    & {$I_{avg}^{min}$}
+    & {$I_{avg}^{max}$}
+    & {Pic TX}
+    & {$I_{avg}^{min}$}
+    & {$I_{avg}^{max}$}
+    & {Pic TX}
+    \\
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\ampere})}
+    \\
+    \midrule
+    Quectel BC95-G & 60 & 250 & { } & { } & { } & { } \\
+    SARA-R410M     & 60 & 140 & 0.5 & 100 & 190 & 0.5 \\
+    SARA-R412M     & 65 & 240 & 0.9 & 100 & 360 & 0.9 \\
+    SARA-R42 series& 65 & 230 & 0.8 & 105 & 350 & 0.8 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Redesign of table in Figure~\ref{fig:source-table-3}. Tx/Rx power.}
+  \label{tab:txrx-power}
+\end{table}
+
+Here the original is split into two complementary tables for clarity
+and to avoid an unwieldy length. Table~\ref{tab:low-power} covers
+consumption in low-power modes; Table~\ref{tab:txrx-power} focuses on
+transmit/receive power. The source code for both tables follows:
+\begin{verbatim}
+  \begin{tabular}{
+    l
+    S[table-format=1.1]
+    S[table-format=1.1]
+    S[table-format=1.2]
+    S[table-format=3.2]
+    }
+    \toprule
+    & \multicolumn{2}{c}{\emph{Quiescent}}
+    & \multicolumn{2}{c}{\emph{eDRX}}
+    \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    {Mòdul}
+    & {Power off}
+    & {PSM}
+    & {Cycle}
+    & {I\textsubscript{avg}}
+    \\
+    & {(\unit{\micro\ampere})}
+    & {(\unit{\micro\ampere})}
+    & {(\unit{\second})}
+    & {(\unit{\milli\ampere})}
+    \\
+    \midrule
+    Quectel BC95-G &   & 3 & 2.6    & 0.5 \\
+    SARA-R410M     & 6 & 8 & 20.48  & 0.9 \\
+                   &   &   & 655.36 & 0.7 \\
+    SARA-R412M     & 6 & 8 & 20.48  & 0.9 \\
+                   &   &   & 655.36 & 0.7 \\
+    SARA-R42 series& 3 & 3 & 20.48  & 0.6 \\
+                   &   &   & 655.36 & 0.5 \\
+    \bottomrule
+  \end{tabular}
+\end{verbatim}
+
+\begin{verbatim}
+  \begin{tabular}{@{}
+    l
+    S[table-format=2.0]
+    S[table-format=3.0]
+    S[table-format=1.1]
+    S[table-format=3.0]
+    S[table-format=3.0]
+    S[table-format=1.1]
+    @{}}
+    \toprule
+    &
+    \multicolumn{3}{c}{\emph{NB-IoT}} &
+    \multicolumn{3}{c}{\emph{LTE-M}}
+    \\
+    \cmidrule(r){2-4} \cmidrule(l){5-7}
+    {Mòdul}
+    & {$I_{avg}^{min}$}
+    & {$I_{avg}^{max}$}
+    & {Pic TX}
+    & {$I_{avg}^{min}$}
+    & {$I_{avg}^{max}$}
+    & {Pic TX}
+    \\
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\milli\ampere})}
+    & {(\unit{\ampere})}
+    \\
+    \midrule
+    Quectel BC95-G & 60 & 250 & { } & { } & { } & { } \\
+    SARA-R410M     & 60 & 140 & 0.5 & 100 & 190 & 0.5 \\
+    SARA-R412M     & 65 & 240 & 0.9 & 100 & 360 & 0.9 \\
+    SARA-R42 series& 65 & 230 & 0.8 & 105 & 350 & 0.8 \\
+    \bottomrule
+  \end{tabular}
+\end{verbatim}
+
+\subsection*{Example 4}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.7\linewidth]{taula-exemple-4.png}
+  \caption{Original table for example 4}
+  \label{fig:source-table-4}
+\end{figure}
+
+The table in Figure~\ref{fig:source-table-4} illustrates a non-numeric
+comparison (virtual-reality software). Its flaws are familiar:
+\begin{itemize}
+\item Again, an abusive use of rules—very common!
+\item Bold is used even though sectioning already claims it.
+\item Several cells are too verbose.
+\end{itemize}
+
+\begin{table}[tb]
+  \centering
+  \small
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+  \renewcommand{\arraystretch}{1.05}
+  \newcommand{\Lone}[1]{\emph{#1}}              % top level
+  \newcommand{\Ltwo}[1]{\hspace{1.25em}#1}       % 2nd level
+
+  \begin{tabularx}{0.95\linewidth}{@{} l L L L L @{}}
+    \toprule
+    Característica & Unity & Unreal Engine & VR Maker & Blender \\
+    \midrule
+
+    \Lone{Funcionalitat bàsica} \\
+    \Ltwo{Modelatge 3D}              & Sí & Sí & Sí & Sí \\
+    \Ltwo{Animació}                  & Sí & Sí & No & Sí \\
+    \Ltwo{Visual scripting}          & Sí & Sí & No & No \\
+    \addlinespace[0.6ex]
+
+    \Lone{Rendiment} \\
+    \Ltwo{Renderitzat}               & Bon rendiment; gràfics correctes
+                                     & Exce\l.lent; gràfics avançats
+                                     & Depèn del motor
+                                     & Moltes opcions de render \\
+    \Ltwo{Optimització RV}           & Sí & Sí & Depèn del dev & Depèn del dev \\
+    \addlinespace[0.6ex]
+
+    \Lone{Compatibilitat} \\
+    \Ltwo{Amb  RV}                   & Sí & Sí & Sí & Sí (plugins) \\
+    \Ltwo{S. Operatiu}               & Win, Linux, macOS
+                                     & Win, Linux, macOS
+                                     & Win, macOS, iOS, Android
+                                     & Win, Linux, macOS \\
+    \addlinespace[0.6ex]
+
+    \Lone{Cost i suport} \\
+    \Ltwo{Preu}                      & Gratuït bàsic & Gratuït bàsic & Segons subscripció & Gratuït \\
+    \Ltwo{Comunitat}                 & Molt activa
+                                     & Molt activa
+                                     & Segons proveïdor
+                                     & Més petita / menys recursos \\
+    \Ltwo{Nivell aprenentatge}       & Mitjà-alt & Mitjà-alt & Mitjà-baix & Mitjà-alt \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Redesign of table shown in Figure~\ref{fig:source-table-4}}
+  \label{tab:soft-comparison}
+\end{table}
+
+Table~\ref{tab:soft-comparison} presents the redesign. Improvements
+include:
+\begin{itemize}
+\item Removal of unnecessary rules.
+\item Reduction and normalisation of emphasis.
+\item Shortened cell contents.
+\item Rows reordered for a more meaningful sequence.
+\item Added vertical hierarchy for easier scanning.
+\item Slightly reduced type size to save space.
+\end{itemize}
+
+The source code is:
+\begin{verbatim}
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+  \renewcommand{\arraystretch}{1.05}
+  \newcommand{\Lone}[1]{\emph{#1}}              % top level
+  \newcommand{\Ltwo}[1]{\hspace{1.25em}#1}       % 2nd level
+
+  \begin{tabularx}{0.95\linewidth}{@{} l L L L L @{}}
+    \toprule
+    Característica & Unity & Unreal Engine & VR Maker & Blender \\
+    \midrule
+
+    \Lone{Funcionalitat bàsica} \\
+    \Ltwo{Modelatge 3D}              & Sí & Sí & Sí & Sí \\
+    \Ltwo{Animació}                  & Sí & Sí & No & Sí \\
+    \Ltwo{Visual scripting}          & Sí & Sí & No & No \\
+    \addlinespace[0.6ex]
+
+    \Lone{Rendiment} \\
+    \Ltwo{Renderitzat}               & Bon rendiment; gràfics correctes
+                                     & Exce\l.lent; gràfics avançats
+                                     & Depèn del motor
+                                     & Moltes opcions de render \\
+    \Ltwo{Optimització RV}           & Sí & Sí & Depèn del dev & Depèn del dev \\
+    \addlinespace[0.6ex]
+
+    \Lone{Compatibilitat} \\
+    \Ltwo{Amb  RV}                   & Sí & Sí & Sí & Sí (plugins) \\
+    \Ltwo{S. Operatiu}               & Win, Linux, macOS
+                                     & Win, Linux, macOS
+                                     & Win, macOS, iOS, Android
+                                     & Win, Linux, macOS \\
+    \addlinespace[0.6ex]
+
+    \Lone{Cost i suport} \\
+    \Ltwo{Preu}                      & Gratuït bàsic & Gratuït bàsic &
+                                       Segons subscripció & Gratuït \\
+    \Ltwo{Comunitat}                 & Molt activa
+                                     & Molt activa
+                                     & Segons proveïdor
+                                     & Més petita / menys recursos \\
+    \Ltwo{Nivell aprenentatge}       & Mitjà-alt & Mitjà-alt & Mitjà-baix &
+                                     Mitjà-alt \\
+    \bottomrule
+  \end{tabularx}
+\end{verbatim}
+
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% LaTeX-biblatex-use-Biber: t
+%%% End:
