@@ -1,0 +1,192 @@
+# Bureti Temporal Segmentation
+
+Deep learning-based tea plantation mapping in Kenya's Bureti and Konoin sub-counties using multitemporal Sentinel-2 imagery. We compare two segmentation architectures across five experiments varying temporal depth and training data availability:  
+1. Temporal UNet with temporal attention fusion
+2. DeepLabV3+ baseline
+
+Both use a frozen SSL4EO-S12 ResNet50 encoder pretrained on Sentinel-2.
+
+This repository contains training pipelines, SLURM job scripts, and supporting utilities. Data and model weights are included in the repository. To set up locally following the steps below.
+
+
+## Repository Structure
+
+    bureti_temporal_segmentation/
+    .
+    +-- config.py                                   Central configuration loader
+    +-- verify_config.py                            Sanity check before running experiments
+    +-- temporal_unet_pipeline.py                   T-UNet training pipeline (E1, E3, E4)
+    +-- deeplabv3_pipeline.py                       DeepLabV3+ training pipeline (E2, E5)
+    +-- convert_ssl4eo_weights.py                   SSL4EO-S12 weight conversion utility
+    +-- extract_attention_weights.py                Attention weights analysis
+    +-- env.template                                Template for machine-specific paths
+    +-- ssl4eo_resnet50_12ch.keras                  SSL4EO-S12 keras weights
+    +-- ssl4eo_resnet50_12ch.weights.h5             Stores SSL4EO-S12 weights and architecture
+    +-- .gitignore
+    +-- slurm/
+        +-- run_tunet_experiments.sh            E1, E3, E4
+        +-- run_deeplab_experiments.sh          E2, E5
+        +-- run_extract_attention_weights.sh    E1, E4
+    +-- notebooks/
+        +-- Seasonal_data_extraction_12_bands.ipynb     Colab notebook for multitemporal data extraction
+    +-- data/                           Not tracked by git
+        +-- Buret_Multitemporal_Data/
+            +-- 2023_growing/
+            +-- 2023_picking/
+            +-- 2024_growing/
+            +-- 2024_picking/
+    +-- outputs/                        Not tracked by git
+    +-- logs/                           Not tracked by git
+
+
+## Setup
+
+### 1. Clone and create the conda environment
+
+    git clone https://github.com/Gitmuthomi/GitongaEric-TFM
+    cd bureti_temporal_segmentation
+    conda create -n tea_seg python=3.11
+    conda activate tea_seg
+    pip install tensorflow==2.16.1 keras==3.3.3 numpy scikit-learn python-dotenv
+
+
+### 2. Configure your paths
+
+All machine-specific paths live in a single `.env` file that you create locally. It is listed in `.gitignore` and should never be committed.
+
+Open `.env.template` and fill in the absolute paths for your machine or SLURM cluster. No quotes, no spaces around the equals sign.
+
+    PROJECT_DIR=/absolute/path/to/bureti_temporal_segmentation
+    DATA_DIR=/absolute/path/to/bureti_temporal_segmentation/data/Buret_Multitemporal_Data
+    OUTPUT_DIR=/absolute/path/to/bureti_temporal_segmentation/outputs
+    SSL4EO_WEIGHTS=/absolute/path/to/bureti_temporal_segmentation/ssl4eo_resnet50_12ch.keras
+    CONDA_ENV_NAME=tea_seg
+
+Copy the template to an `.env` file
+
+    cp env.template .env
+
+Mistakes to avoid:
+
+- Spaces around `=` (e.g. `PROJECT_DIR= /path`) will cause bash to treat the path as a command
+- Quoted values such as `PROJECT_DIR="/path"` are fine for Python but will break `source` in shell scripts
+
+
+### 3. Verify the configuration
+
+Before running anything, confirm that all paths resolve correctly on your machine:
+
+    python verify_config.py
+
+Expected output:
+
+    Paths:
+      project_dir          OK  /your/path/bureti_temporal_segmentation
+      data_dir             OK  /your/path/.../Buret_Multitemporal_Data
+      output_dir           OK  /your/path/.../outputs
+      ssl4eo_weights       OK  /your/path/.../ssl4eo_resnet50_12ch.keras
+
+    All critical paths resolved. Configuration looks good.
+
+If `output_dir` shows MISSING, that is fine as it is created automatically on the first training run. If `data_dir` or `ssl4eo_weights` shows MISSING, fix the corresponding path in `.env` before continuing.
+
+
+### 4. Convert the SSL4EO-S12 weights
+
+The SSL4EO-S12 pretrained weights are distributed as a 13-band PyTorch checkpoint. 
+In the event the SSL4EO-S12 weights need to be re-downloaded, follow the instructions below:
+
+Download `B13_rn50_moco_0099_ckpt.pth` using `gdown` and place it in the project root:
+ 
+    pip install gdown
+    gdown 1OrtPfG2wkO05bimstQ_T9Dza8z3zp8i-
+ 
+If the shorthand does not work, use the full URL:
+ 
+    gdown "https://drive.google.com/uc?id=1OrtPfG2wkO05bimstQ_T9Dza8z3zp8i-"
+ 
+Before converting, inspect the checkpoint to confirm the layer mapping looks correct:
+ 
+    python convert_ssl4eo_weights.py \
+        --inspect \
+        --pth_path B13_rn50_moco_0099_ckpt.pth
+ 
+Once the layer names look as expected, convert to the 12-band Keras format required by the pipeline:
+ 
+    python convert_ssl4eo_weights.py \
+        --slice \
+        --convert \
+        --pth_path B13_rn50_moco_0099_ckpt.pth \
+        --output_path ssl4eo_resnet50_12ch.keras
+
+The `--slice` flag removes the B10 channel from the first convolutional kernel (reducing the input from 13 to 12 bands). The `--convert` flag transposes all convolutional kernels from PyTorch layout to Keras layout and saves the result. The output file should match the `SSL4EO_WEIGHTS` path in your `.env`.
+
+## Running Experiments
+
+All experiments are submitted via SLURM. The shell scripts source your `.env` file automatically, so no paths need to be edited in the scripts themselves.
+
+### Temporal UNet experiments (E1, E3, E4)
+
+    sbatch slurm/run_temporal_unet.sh
+
+This runs nine training jobs in sequence: three seeds for each of E1 (4 timesteps, 100% data), E3 (4 timesteps, 50% data), and E4 (2 timesteps, 100% data).
+
+### Attention weight analysis
+
+After running the T-UNet experiments, attention weights from the experiments E1 and E4 can be extracted 
+and analysed:
+
+    sbatch slurm/run_attention_extract.sh
+
+Before running the shell, the `--checkpoint_path` flag should be updated with `run_dir` 
+of the representative seed run you wish to analyse.
+
+    --checkpoint_path "${OUTPUT_DIR}/run_dir/models/temporal_unet_best.keras"
+
+### DeepLabV3+ experiments (E2, E5)
+
+    sbatch slurm/run_deeplabv3.sh
+
+This runs the `BEST_TIMESTEP` selection for E2 followed by E5 (2024 growing season, 50% data, three seeds).
+
+### Useful SLURM commands
+
+Check the status of your submitted jobs:
+
+    squeue -u $USER
+
+The output shows job ID, partition, name, status (PD = pending, R = running), and time elapsed.
+
+Cancel a specific job:
+
+    scancel <job_id>
+
+Cancel all your running jobs at once:
+
+    scancel -u $USER
+
+Check available partitions and node status:
+
+    sinfo
+
+View the output log of a running or completed job in real time:
+
+    tail -f logs/tunet_<job_id>.out
+
+### Outputs
+
+Each training run writes its outputs to a subdirectory of `OUTPUT_DIR` named by experiment and seed, e.g. `outputs/run_20260419_125556_seed42`. Each subdirectory contains the best checkpoint (`temporal_unet_best.keras`), per-epoch training history (`history.csv`), test set metrics (`test_metrics.json`), and confusion matrix figures.
+
+
+## Reproducibility
+
+Each experiment is run three times with decoder initialisation seeds 42, 123, and 456. The encoder is frozen throughout and only decoder weights, the temporal attention module (T-UNet) or ASPP module (DeepLabV3+) are affected by the seed. The train/val/test split uses `random_state=42` and is held constant across all runs. Reported metrics are mean and standard deviation across the three seeds.
+
+The pipeline calls `set_seed()` as the first operation in `main()` before any data loading or model construction. TensorFlow op determinism is enabled via `tf.config.experimental.enable_op_determinism()` to suppress non-deterministic GPU operations. Full details are in Appendix C of the accompanying thesis.
+
+
+## Data
+
+The patch dataset (142 patches, 256x256 pixels, 10m resolution, 12 Sentinel-2 bands) is included in this repository. Each patch has four seasonal composites: 2023 growing, 2023 picking, 2024 growing, and 2024 picking. Labels follow three classes: Tea (0), Forest (1), Non-Tea (2), with 255 used as the ignore label for background and no-data pixels.
+
+Sentinel-2 Level-2A composites were generated via Google Earth Engine. The GEE pipeline is documented in Appendix A of the thesis and the Google Colab notebook is available in `notebooks/Seasonal_data_extraction_12_bands.ipynb`.
