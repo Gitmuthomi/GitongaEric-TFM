@@ -20,8 +20,6 @@ This repository contains training pipelines, SLURM job scripts, and supporting u
     +-- convert_ssl4eo_weights.py                   SSL4EO-S12 weight conversion utility
     +-- extract_attention_weights.py                Attention weights analysis
     +-- env.template                                Template for machine-specific paths
-    +-- ssl4eo_resnet50_12ch.keras                  SSL4EO-S12 keras weights
-    +-- ssl4eo_resnet50_12ch.weights.h5             Stores SSL4EO-S12 weights and architecture
     +-- .gitignore
     +-- slurm/
         +-- run_tunet_experiments.sh            E1, E3, E4
@@ -94,7 +92,7 @@ If `output_dir` shows MISSING, that is fine as it is created automatically on th
 ### 4. Convert the SSL4EO-S12 weights
 
 The SSL4EO-S12 pretrained weights are distributed as a 13-band PyTorch checkpoint. 
-In the event the SSL4EO-S12 weights need to be re-downloaded, follow the instructions below:
+To download and convert to keras-compatible weights, follow the instructions below:
 
 Download `B13_rn50_moco_0099_ckpt.pth` using `gdown` and place it in the project root:
  
