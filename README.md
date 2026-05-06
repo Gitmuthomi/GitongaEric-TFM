@@ -1,4 +1,4 @@
-# Bureti Temporal Segmentation
+# Tea Plantation Temporal Segmentation
 
 Deep learning-based tea plantation mapping in Kenya's Bureti and Konoin sub-counties using multitemporal Sentinel-2 imagery. We compare two segmentation architectures across five experiments varying temporal depth and training data availability:  
 1. Temporal UNet with temporal attention fusion
