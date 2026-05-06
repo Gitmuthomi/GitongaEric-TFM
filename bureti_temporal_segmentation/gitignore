@@ -1,0 +1,48 @@
+# Environment and secrets
+
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+
+# Model weights and checkpoints
+# The converted SSL4EO-S12 weights are distributed separately
+
+*.keras
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+
+# Outputs: generated artefacts
+
+outputs/
+logs/
+*.log
+*.csv
+*.png
+*.tif
+*.tiff
+
+# OS & editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
