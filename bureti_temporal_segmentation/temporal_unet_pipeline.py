@@ -55,8 +55,8 @@ DEFAULT_CONFIG = {
     "gradient_clipnorm": 1.0,
     
     # Loss alpha weights
-    "ce_weight": 0.3,
-    "dice_weight": 0.7,
+    "ce_weight": 0.2,
+    "dice_weight": 0.8,
     
     # Model architecture
     "backbone": "ResNet50",

@@ -53,8 +53,8 @@ DEFAULT_CONFIG = {
     "gradient_clipnorm": 1.0,
 
     # Loss composition
-    "ce_weight": 0.3,
-    "dice_weight": 0.7,
+    "ce_weight": 0.2,
+    "dice_weight": 0.8,
 
     # Model
     "backbone": "ResNet50",
