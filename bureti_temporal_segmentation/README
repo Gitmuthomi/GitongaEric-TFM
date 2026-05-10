@@ -6,7 +6,7 @@ Deep learning-based tea plantation mapping in Kenya's Bureti and Konoin sub-coun
 
 Both use a frozen SSL4EO-S12 ResNet50 encoder pretrained on Sentinel-2.
 
-This repository contains training pipelines, SLURM job scripts, and supporting utilities. Data and model weights are included in the repository. To set up locally following the steps below.
+This repository contains training pipelines, SLURM job scripts, and supporting utilities. The data is included in the repository. To set up locally following the steps below.
 
 
 ## Repository Structure
@@ -20,8 +20,6 @@ This repository contains training pipelines, SLURM job scripts, and supporting u
     +-- convert_ssl4eo_weights.py                   SSL4EO-S12 weight conversion utility
     +-- extract_attention_weights.py                Attention weights analysis
     +-- env.template                                Template for machine-specific paths
-    +-- ssl4eo_resnet50_12ch.keras                  SSL4EO-S12 keras weights
-    +-- ssl4eo_resnet50_12ch.weights.h5             Stores SSL4EO-S12 weights and architecture
     +-- .gitignore
     +-- slurm/
         +-- run_tunet_experiments.sh            E1, E3, E4
@@ -29,14 +27,14 @@ This repository contains training pipelines, SLURM job scripts, and supporting u
         +-- run_extract_attention_weights.sh    E1, E4
     +-- notebooks/
         +-- Seasonal_data_extraction_12_bands.ipynb     Colab notebook for multitemporal data extraction
-    +-- data/                           Not tracked by git
+    +-- data/
         +-- Buret_Multitemporal_Data/
             +-- 2023_growing/
             +-- 2023_picking/
             +-- 2024_growing/
             +-- 2024_picking/
-    +-- outputs/                        Not tracked by git
-    +-- logs/                           Not tracked by git
+    +-- outputs/
+    +-- logs/
 
 
 ## Setup
@@ -54,7 +52,7 @@ This repository contains training pipelines, SLURM job scripts, and supporting u
 
 All machine-specific paths live in a single `.env` file that you create locally. It is listed in `.gitignore` and should never be committed.
 
-Open `.env.template` and fill in the absolute paths for your machine or SLURM cluster. No quotes, no spaces around the equals sign.
+Open `.env.template` and fill in the absolute paths for your machine or SLURM cluster.
 
     PROJECT_DIR=/absolute/path/to/bureti_temporal_segmentation
     DATA_DIR=/absolute/path/to/bureti_temporal_segmentation/data/Buret_Multitemporal_Data
@@ -94,7 +92,7 @@ If `output_dir` shows MISSING, that is fine as it is created automatically on th
 ### 4. Convert the SSL4EO-S12 weights
 
 The SSL4EO-S12 pretrained weights are distributed as a 13-band PyTorch checkpoint. 
-In the event the SSL4EO-S12 weights need to be re-downloaded, follow the instructions below:
+To download and convert to keras-compatible weights, follow the instructions below:
 
 Download `B13_rn50_moco_0099_ckpt.pth` using `gdown` and place it in the project root:
  
